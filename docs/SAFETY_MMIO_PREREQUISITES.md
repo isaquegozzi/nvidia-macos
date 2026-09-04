@@ -21,7 +21,7 @@
 | 8 | Plano de reversão (valor de restore + ordem + critério de abort) | [ ] `BLOCKED` | sem proposta |
 | 9 | Revisor designado + aprovação datada | [ ] `BLOCKED` | sem revisor |
 | 10 | **Acesso remoto (SSH Machine B → Machine A) testado antes da sessão** | [ ] `BLOCKED` | Reconfirmado 2026-09-04 (somente leitura): `sshd` binário presente mas `disabled+inactive`, nada em `:22`; teste real **não executado** |
-| 11 | Display isolado da target (iGPU = display, RTX = target, ver `docs/lab/dual-gpu-setup.md`) | [ ] `BLOCKED` | Progresso 2026-09-04: iGPU `1002:1638` PRESENTE (`amdgpu`, card0/renderD129, HDMI-A-2 ativo) — `lab-status` = `PARTIALLY_READY`; porém desktop (gnome-shell/Xwayland, glxinfo NVIDIA, boot_vga=1, DP-1 ativo) ainda na RTX |
+| 11 | Display isolado da target (iGPU = display, RTX = target, ver `docs/lab/dual-gpu-setup.md`) | [ ] `BLOCKED` | Grande progresso pós-reboot 2026-09-04: boot_vga AMD=1/NVIDIA=0, fb só amdgpudrmfb primary, RTX com 0 conectores ativos, `glxinfo` AMD, render dominante 08:00.0 (20 vs 2 fds) — MAS gnome-shell ainda mantém fds abertos na RTX (2× renderD128 + card1 + /dev/nvidia*) e `lab-status` = `PARTIALLY_READY`; "dependência zero" não provada |
 
 ## Regra de desbloqueio
 

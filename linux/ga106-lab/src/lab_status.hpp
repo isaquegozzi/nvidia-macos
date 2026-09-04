@@ -67,10 +67,11 @@ struct LabStatus {
   // Alternativa + sintese.
   AltGpuInfo alt;
   std::string desktop_gpu = "unknown";  // BDF que hospeda o desktop ou unknown
+  std::string desktop_render_note;  // massa renderD* do compositor por GPU
   bool target_used_known = false;
   bool target_used_by_desktop = false;
   bool session_on_alt = false;
-  std::string verdict = "unknown";  // BLOCKED | READY_FOR_NEXT_PHASE | unknown
+  std::string verdict = "unknown";  // BLOCKED | PARTIALLY_READY | READY_FOR_NEXT_PHASE | unknown
   std::vector<std::string> verdict_reasons;
 };
 

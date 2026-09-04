@@ -188,6 +188,38 @@ std::vector<std::string> scan_target_holders(
   return out;
 }
 
+// Conta TODOS os fds renderD* de processos desktop nos nos dados (massa de
+// render; sem o `break` por processo do scan_target_holders). Leitura pura.
+int count_desktop_render_fds(const std::vector<std::string>& node_names) {
+  int total = 0;
+  if (node_names.empty()) return 0;
+  std::size_t scanned = 0;
+  for (const auto& pid : list_dir_names("/proc")) {
+    if (!is_all_digits(pid)) continue;
+    if (++scanned > 4096) break;
+    const std::string comm = read_first_line("/proc/" + pid + "/comm");
+    if (comm.empty() || !is_desktop_comm(comm)) continue;
+    const std::string fddir = "/proc/" + pid + "/fd";
+    std::error_code ec;
+    std::filesystem::directory_iterator it(fddir, ec);
+    if (ec) continue;
+    std::size_t fds = 0;
+    for (const auto& entry : it) {
+      if (++fds > 512) break;
+      const std::string link = readlink_target(entry.path().string());
+      if (!starts_with(link, "/dev/dri/renderD")) continue;
+      const std::string base = basename_of(link);
+      for (const auto& w : node_names) {
+        if (base == w) {
+          ++total;
+          break;
+        }
+      }
+    }
+  }
+  return total;
+}
+
 // O no DRM (cardN) dono do prefixo de um conector "cardN-<saida>".
 bool connector_owned_by(const std::string& name, const std::string& bdf,
                         const std::vector<std::string>& node_names) {
@@ -468,6 +500,24 @@ LabStatus collect_lab_status() {
   }
 
   // --- sintese: qual GPU hospeda o desktop? ---
+  // Massa de render (todos os fds renderD* do compositor por GPU) indica onde
+  // o GL/EGL realmente roda; qualquer toque no alvo mantem o fail-closed.
+  int target_render_fds = 0;
+  int alt_render_fds = 0;
+  {
+    std::vector<std::string> target_nodes;
+    for (const auto& n : discover_drm_nodes(kLabTargetBdf)) {
+      target_nodes.push_back(n.name);
+    }
+    target_render_fds = count_desktop_render_fds(target_nodes);
+    if (st.alt.present) {
+      std::vector<std::string> alt_nodes;
+      for (const auto& n : discover_drm_nodes(st.alt.bdf)) {
+        alt_nodes.push_back(n.name);
+      }
+      alt_render_fds = count_desktop_render_fds(alt_nodes);
+    }
+  }
   const int target_active = count_active(st.connectors);
   const int alt_active =
       st.alt.present ? count_active(st.alt.connectors) : 0;
@@ -513,6 +563,18 @@ LabStatus collect_lab_status() {
   } else {
     st.desktop_gpu = "unknown";
   }
+  // Massa de render pode contradizer o fail-closed acima (ex.: compositor com
+  // 12 fds render na iGPU + 2 residuais na RTX): registra-se a GPU dominante
+  // como informacao, sem afrouxar o veredito.
+  if (st.alt.present && (target_render_fds > 0 || alt_render_fds > 0)) {
+    st.desktop_render_note =
+        "render dominante do compositor: " +
+        std::string(alt_render_fds >= target_render_fds ? st.alt.bdf
+                                                       : kLabTargetBdf) +
+        " (fds renderD* do desktop: alvo=" +
+        std::to_string(target_render_fds) +
+        " alt=" + std::to_string(alt_render_fds) + ")";
+  }
 
   st.target_used_known = true;
   st.target_used_by_desktop =
@@ -555,6 +617,9 @@ LabStatus collect_lab_status() {
                  (st.session_on_alt ? "sim" : "nao"));
     rs.push_back(std::string("clientes desktop no alvo: ") +
                  (st.target_used_by_desktop ? "sim" : "nao"));
+    if (!st.desktop_render_note.empty()) {
+      rs.push_back(st.desktop_render_note);
+    }
 
     const bool compute_free =
         st.compute_queried && st.compute_desktop.empty();
@@ -698,6 +763,9 @@ std::string render_lab_status(const LabStatus& st) {
     }
   }
   os << "Desktop GPU: " << st.desktop_gpu << "\n";
+  if (!st.desktop_render_note.empty()) {
+    os << "Desktop render: " << st.desktop_render_note << "\n";
+  }
   os << "Verdict: " << st.verdict << "\n";
   for (const auto& r : st.verdict_reasons) os << "  - " << r << "\n";
   os << "  (READY_FOR_NEXT_PHASE exige iGPU presente E sessao na iGPU E "
