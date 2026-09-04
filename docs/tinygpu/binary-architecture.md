@@ -49,7 +49,7 @@ IOKitPersonalities = {"TinyGPUDriver": {
   "IOClass": "IOUserService",
   "IOMatchCategory": "TinyGPUDriver",
   "IOPCIClassMatch": "0x03000000",          # <-- único critério PCI no plist
-  "IOPCITunnelCompatible": True,            # <-- thunderbolt-only no matching
+  "IOPCITunnelCompatible": True,            # <-- [SUPERADO "thunderbolt-only no matching" — ver §9 Correção TGM0: declara suporte Thunderbolt, não prova exclusão]
   "IOProviderClass": "IOPCIDevice",
   "IOResourceMatch": "IOKit",
   "IOUserClass": "TinyGPUDriver",
@@ -65,7 +65,7 @@ Idêntico ao source `extra/usbgpu/tbgpu/installer/TinyGPUDriverExtension/Info.pl
 **Veredito matching (resposta direta):**
 - Classe: `IOPCIClassMatch=0x03000000` (display controller, `0x03____`; máscara exata sem `&` → match de classe inteira `0x030000`). `base_class=0x03` do `PCIIface` (`ops_nv.py`) é consistente.
 - IDs: **NENHUM `IOPCIMatch` / `IOPCIPrimaryMatch` / `IOPCISecondaryMatch` no `Info.plist`** (ausência verificada por decode completo). Filtro por vendor vive no **entitlement** (§5), não no plist.
-- Thunderbolt-only? **SIM no nível de matching**: `IOPCITunnelCompatible=True` + `IOProviderClass=IOPCIDevice`. Sem essa chave, internas casariam pela classe; com ela, só tunneled. Detalhe e gap em `why-usb4.md` / `internal-pcie-gap.md`.
+- Thunderbolt-only? [SUPERADO o "SIM no nível de matching" — ver §9 Correção TGM0] Leitura corrigida: `IOPCITunnelCompatible=True` + `IOProviderClass=IOPCIDevice` prova (como fato, `CONFIRMED`) que a personality **declara suportar Thunderbolt**; NÃO prova que internas seriam excluídas ("Sem essa chave, internas casariam pela classe; com ela, só tunneled" superado — a recíproca não é documentada pela Apple e não há checagem de `IOPCITunnelled` no driver/server). Detalhe e gap em `why-usb4.md` / `internal-pcie-gap.md` (ambos com Correção TGM0).
 - Outros: `IOMatchCategory=TinyGPUDriver` (arbitragem), `IOUserServerName=org.tinygrad.tinygpu.Driver`, UserClient `TinyGPUDriverUserClient` via `IOUserUserClient`.
 
 ## 4. Identifiers, archs, plataformas
@@ -124,3 +124,12 @@ Entitlement keys embutidas como strings: `com.apple.developer.driverkit[.transpo
 - Comportamento vivo: prompt `would like to use a new driver extension`, mapeamento BAR real (size/idx), `PrepareDMA` IOVA/paddrs reais, `ExternalMethod` selectors ao vivo, tráfego `tinygpu.sock` real, `CopyClientMemoryForType` types reais.
 - Desassembly além de strings (Hopper/lldb, seletores, `CreateDMA` vs `PrepareDMA` paths) e execução dos Mach-O (não executáveis em Linux).
 - Datas de build vs assinatura (XB/DT* são claims do plist, não prova sem `codesign`).
+
+## 9. Correção TGM0 (2026-09-04) — semântica `IOPCITunnelCompatible`
+
+Bug TG0: §3 leu `IOPCITunnelCompatible=True` como prova de "Thunderbolt-only no matching". Correção perante a documentação Apple atual (fonte canônica):
+
+- A chave indica que o driver **suporta Thunderbolt** ("To indicate that your PCIe driver supports Thunderbolt, include the `IOPCITunnelCompatible` key [...]" — `developer.apple.com/documentation/pcidriverkit/creating-custom-pcie-drivers-for-thunderbolt-devices`); é opt-in que protege o caminho tunneled contra drivers antigos ("[...] the `IOPCIFamily` will not load the drivers for Thunderbolt connected PCI devices. This opt-in key protects consumers against older drivers [...]" — Thunderbolt Device Driver Programming Guide, arquivo Apple).
+- A presença real de túnel é indicada por **`IOPCITunnelled` no IORegistry** (propriedade do dispositivo/caminho, verificável via `getProperty(kIOPCITunnelledKey, ..., kIORegistryIterateRecursively | kIORegistryIterateParents)` ou `ioreg` — mesmo guia Apple).
+
+O que permanece `CONFIRMED` neste doc: o fato decodificado (plist do dext = source `Info.plist:5-35@e8c8ba1c`: `IOPCIClassMatch=0x03000000`, `IOPCITunnelCompatible=True`, sem `IOPCI*Match` por ID) e a ausência de `ASM/2464/USB4/Thunderbolt` nas strings do dext (§7 — que adicionalmente implica: nenhuma evidência TG0 de checagem de `IOPCITunnelled` no driver). O que passa a `UNKNOWN`: que a flag excluiria GPUs internas não-tunneled do matching. Numeração das seções anteriores preservada (citações §3/§5/§7 de outros docs continuam válidas como localização do fato, não da conclusão superada).

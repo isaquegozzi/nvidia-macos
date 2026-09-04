@@ -106,3 +106,17 @@ NÃO PROVADO (exige `ioreg`/HW vivo, fora do TG0):
 - `docs/tinygpu/support-matrix.md` §2/§5, `docs/tinygpu/why-usb4.md`, `docs/tinygpu/internal-pcie-gap.md`, `docs/tinygpu/binary-architecture.md` §3/§5/§7, `docs/tinygpu/pci-transport-contract.md` §2–§4, `docs/tinygpu/apl-remote-pci.md` §3–§4, `docs/tinygpu/remote-protocol.md` §5–§6.
 - `docs/tinygrad-nv/ops-nv-audit.md` §2–§4, `docs/tinygrad-nv/nv-stack-map.md`, `docs/tinygrad-nv/nvdev-audit.md` §0–§6, `docs/tinygrad-nv/ga106-gap-analysis.md` §26-30 + leitura do gap.
 - `docs/macos/driver-architecture-gate.md` §1–§5, `docs/ga106/first-mmio-read.md` §2, `docs/macos/common-reuse.md`.
+
+## 7. Addendum TGM0 (2026-09-04) — correção `IOPCITunnelCompatible` (decisão NÃO reescrita)
+
+Este addendum registra a correção do bug TG0 sem reescrever a decisão (reavaliação da estratégia fica para follow-up). Bug: `IOPCITunnelCompatible=true` foi usado como prova de "Thunderbolt-only" (matching excluiria a interna). Correção perante a documentação Apple atual (fonte canônica): a chave declara que a personality **suporta PCI tunneled/Thunderbolt** (capacidade do driver — "To indicate that your PCIe driver supports Thunderbolt, include the `IOPCITunnelCompatible` key [...]", `developer.apple.com/documentation/pcidriverkit/creating-custom-pcie-drivers-for-thunderbolt-devices`); a presença real de túnel é indicada por **`IOPCITunnelled` no IORegistry** (propriedade do dispositivo/caminho — Thunderbolt Device Driver Programming Guide, arquivo Apple). A recíproca (presença excluiria não-tunneled) não é documentada, e não há evidência TG0 de checagem de `IOPCITunnelled` no driver/server. Ver Correção TGM0 em `docs/tinygpu/why-usb4.md` (C→`LIKELY` p/ externo, D→`UNKNOWN` p/ filtro), `docs/tinygpu/internal-pcie-gap.md` (Resultado A/B/C em aberto), `docs/tinygpu/binary-architecture.md` §9.
+
+Passagens deste ADR SUPERADAS como prova (texto original preservado acima, leitura corrigida aqui):
+
+- §0 frase justificadora ("o gap é só matching (C+D CONFIRMED...)"): o `D CONFIRMED` como enforcement é superado (D=`UNKNOWN`); a justificativa passa a repousar em base mais fraca (requisito USB4/TB documentado `LIKELY` + risco `built-in` + `ioreg` pendente).
+- §C "o que filtra a interna é `IOPCITunnelCompatible=True`... (why-usb4 D CONFIRMED)" e "diagrama prova que a interna nunca chega a `Start_Impl`": superado como determinístico — internal-pcie-gap Resultado A/B/C em aberto.
+- §C "Delta mínimo" e §2 transporte ("remover/condicionar `IOPCITunnelCompatible`" como remoção de filtro certo): passa a hipótese de fork a validar, não remoção de bloqueio provado.
+- §D "provam enforcement tunneled-only no matching (why-usb4 C+D CONFIRMED)" e "`server.c:195` falha determinística": superado como prova; D-para-interna deixa de ser "rejeitada por bloqueio provado" e passa a "rejeitada por caminho não demonstrado" (requisito USB4 documentado + ausência de teste vivo).
+- §3 "o bloqueio D é contornável pelo fork C" e §4 "why-usb4 = C+D CONFIRMED" / "Gap = matching... nunca instancia": mesma superação; vereditos de reuse% e PROVADO/NÃO PROVADO fora do matching seguem válidos.
+
+Status da decisão: **Estratégia C permanece ACEITA como PROPOSED documental**, mas sua premissa de bloqueio passa a `UNKNOWN`-dependente de `ioreg`/teste vivo. Follow-ups obrigatórios (§5) estendidos: além de `built-in`/`IOPCITunnelled` no `ioreg`, verificar empiricamente se o dext shipped casa (ou não) um nó não-tunneled — i.e., testar a perna B do Resultado A/B/C em vez de assumi-la.
