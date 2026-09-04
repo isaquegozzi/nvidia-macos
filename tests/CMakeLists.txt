@@ -15,3 +15,8 @@ target_include_directories(test_compare_logic PRIVATE
 )
 
 add_test(NAME compare_logic COMMAND test_compare_logic)
+
+add_executable(test_chip_id test_chip_id.cpp)
+target_link_libraries(test_chip_id PRIVATE nvidia_common)
+
+add_test(NAME chip_id COMMAND test_chip_id)

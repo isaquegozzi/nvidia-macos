@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <string>
 
+#include "nvidia/chip.hpp"
 #include "nvidia/pci_device.hpp"
 
 namespace nvidia {
@@ -18,16 +19,14 @@ struct NvidiaDeviceInfo {
   std::string notes;
 
   [[nodiscard]] bool looks_like_ga106() const noexcept {
-    // IDs iniciais (expandir via docs/ga106/ após observação real).
-    switch (pci.device_id) {
-      case 0x2487:  // GA106M (laptop)
-      case 0x2503:  // GA106 [RTX 3060 12GB]
-      case 0x2504:  // GA106 [RTX 3060 12GB]
-      case 0x24AA:
-        return true;
-      default:
-        return chip_name == "GA106";
-    }
+    // Tabela canônica (nvidia/chip.hpp ← docs/ga106/device-ids.md).
+    // O PCI ID conhecido decide: marketing name ("RTX 3060") NÃO prova GA106
+    // (0x2487 é GA104!). O fallback chip_name só vale para IDs ainda
+    // desconhecidos (futura revisão GA106 fora da tabela).
+    const NvidiaChip chip = chip_from_device_id(pci.device_id);
+    if (chip == NvidiaChip::GA106) return true;
+    if (chip != NvidiaChip::Unknown) return false;
+    return chip_name == "GA106";
   }
 };
 
