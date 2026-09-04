@@ -6,7 +6,9 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <vector>
 
+#include "baseline.hpp"
 #include "drm_discovery.hpp"
 #include "pci_discovery.hpp"
 
@@ -18,6 +20,10 @@ constexpr const char* kVersion = "0.0.1-phase0";
 int usage() {
   std::cerr << kTag << " uso: ga106-lab info\n";
   std::cerr << kTag << "   info   imprime o relatorio passivo do GPU observado\n";
+  std::cerr << kTag << " uso: ga106-lab baseline [--out-dir DIR] [--stdout]\n";
+  std::cerr << kTag
+            << "   baseline gera snapshot reproduzivel em "
+               "artifacts/baselines/<timestamp>/\n";
   return 2;
 }
 
@@ -120,6 +126,11 @@ int run_info() {
 
 int main(int argc, char** argv) {
   if (argc == 2 && std::string(argv[1]) == "info") return run_info();
+  if (argc >= 2 && std::string(argv[1]) == "baseline") {
+    std::vector<std::string> rest;
+    for (int i = 2; i < argc; ++i) rest.emplace_back(argv[i]);
+    return ga106lab::run_baseline(rest);
+  }
   if (argc == 2 &&
       (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")) {
     std::cout << "ga106-lab " << kVersion << " (Fase 0, somente leitura)\n";

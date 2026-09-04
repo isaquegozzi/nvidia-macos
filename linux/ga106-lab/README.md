@@ -39,7 +39,40 @@ demais `10de` → `NVIDIA GPU`/`unknown`. Sem dado → `"unknown"`, sem chute.
 ```sh
 ./scripts/build.sh            # configura, compila e roda ctest
 ./build/linux/ga106-lab/ga106-lab info
+./build/linux/ga106-lab/ga106-lab baseline --stdout
+./build/linux/ga106-lab/ga106-lab baseline --out-dir /tmp/ga106-baseline
 ```
+
+## baseline — snapshot reproduzível (somente leitura)
+
+`ga106-lab baseline [--out-dir DIR] [--stdout]` agrega `pci_discovery` /
+`drm_discovery` (mesmas fontes do `info`, sem quebrar nada) + leituras
+`O_RDONLY` de sysfs/proc + saída de ferramentas de inspeção via `popen`
+(`lspci -vv`, `nvidia-smi`, `modinfo`, `vulkaninfo --summary` com timeout,
+`journalctl -k`). Nenhum estado do dispositivo é alterado; campos ausentes
+viram `"unknown"` e ferramentas ausentes nunca fazem o verbo falhar.
+
+Saída padrão: `artifacts/baselines/<timestamp>/baseline.txt` (humano, em
+seções) + `baseline.json` (mesmos campos, serializado à mão sem dependência
+externa), com `<timestamp>` em UTC `%Y%m%d-%H%M%S`. Com `--out-dir DIR`, os
+dois arquivos vão direto para `DIR/`. Com `--stdout`, o `baseline.txt`
+também é impresso. `artifacts/` não é versionado (ver `.gitignore`).
+
+O snapshot é reproduzível: reexecute o mesmo verbo no mesmo host e compare
+`baseline.txt`/`baseline.json` para detectar deriva (troca de driver,
+link PCIe, conectores, VRAM em uso, holders via `/proc` fd, logs filtrados).
+Seções: Meta, Identity (BDF/vendor/device/subsys/rev/arch/chip/driver/UUID
+via `/proc/driver/nvidia/gpus/*/information`), PCI (BARs + `lspci -vv` +
+`current_link_*`/`max_link_*` + `resizable_bar*` + IOMMU), Driver (versão
+`/proc/driver/nvidia/version` + `modinfo` + flavor open/proprietary via
+`"Open"` + params `/sys/module/nvidia*/parameters` + userspace + GPU
+Firmware exposto), DRM (nós + conectores `status`/`modes` + driver DRM),
+Memory (VRAM total/used via `nvidia-smi` + abertura BAR1 + resizable —
+nota no relatório: `BAR1 size != VRAM size não implica erro`), GSP (só
+campos expostos, sem interagir), Vulkan (excerto opcional), Logs
+(`journalctl -k` filtrado por `NVRM|nvidia|nvidia-drm|GSP|PCIe|IOMMU|Xid|GPU`,
+máx 100 linhas), In-use (`nvidia-smi` compute-apps + holders `/dev/dri` via
+`/proc/*/fd`, só leitura, nenhuma ação sobre processos).
 
 ## Exemplo de saida (bancada GA106 real, 0000:01:00.0)
 
