@@ -12,7 +12,9 @@ Fase 0 é 80% documentação. Código sem documento correspondente é suspeito.
 | `nvidia-open-gpu-doc/` | O que a documentação pública de HW garante para Ampere/GA106?   | mapeado       |
 | `research/`         | Decisões, becos sem saída, próximos passos                        | placeholder   |
 | `lab/`              | A bancada está pronta para isolar a RTX sem perder o display?      | mapeado       |
-| `macos/`            | Qual entrypoint de driver (PCIDriverKit vs KEXT) para o lab PCI?   | mapeado       |
+| `macos/`            | Qual entrypoint de driver (PCIDriverKit vs KEXT) para o lab PCI?   | ADR-0002 (TG0) |
+| `tinygpu/`          | Quanto do controle Ampere já existe no TinyGPU e o que falta p/ PCI interno? | mapeado (TG0) |
+| `tinygrad-nv/`      | Quanto do stack NV (NVDev/GSP/mem/submit) é reutilizável?          | mapeado (TG0) |
 
 Regra: toda observação de hardware vira nota datada aqui **antes** de virar
 código em `linux/`. Ver `SAFETY.md` antes de propor qualquer escrita.
@@ -37,3 +39,21 @@ Ver `SAFETY_MMIO_PREREQUISITES.md` (gate: enquanto `BLOCKED`, Fase 0 segue somen
 - `macos/ADR-0001-driver-entrypoint.md` — decisão `IOKit KEXT first` (PCIDriverKit diferido), baseada em carregabilidade real, entitlements, PCI interno, MMIO, futuro, debugging, Tahoe e objetivo gráfico.
 - `ga106/first-mmio-read.md` — candidatura do primeiro MMIO read (doc only, sem execução): veredito reuse `common/` (limpo, só comentários sysfs), `NV_PMC_BOOT_0` confirmado (`0x00000000`, 32-bit, `R--4R`, `0x176xxxxx`, rev `a1` ⇒ `0x176000A1` aprox.) com pins tag `610.57.04` (SHA `e4a5faa…`) + `open-gpu-doc@9fdf5c4…` + Nouveau `46741e4f`/`v6.6`/`986c24e0`; riscos + gates (boot sem NVIDIA + SSH + desktop independente, `BLOCKED` 3/11).
 - `macos/common-reuse.md` — reuse `common/` no macOS (DriverKit C++ vs IOKit C++ vs helper userspace): `NvidiaDeviceInfo`/`NvidiaPciDevice`/`NvidiaPciBar` reutilizáveis sem deps Linux (só comentários sysfs em `pci_device.hpp:3`/`pci_bar.hpp:11`); ressalva tabela `0x2487`/`0x24AA` vs `device-ids.md`.
+
+## Documentos Fase TG0 — TinyGPU Architecture Audit (2026-09-04)
+
+Fontes pinadas: `tinygrad/tinygrad@e8c8ba1c` (2026-09-04), `tinygpu_releases@c0d024f9` (TinyGPU.zip `0c47285e…`, 1634625 B).
+
+- `tinygpu/support-matrix.md` — requisitos TinyGPU (macOS, Ampere+, USB4/TB, `DEV=NV`); RTX 3060/GA106/`2504`: arquitetura LIKELY suportada, SKU específico UNKNOWN.
+- `tinygrad-nv/ops-nv-audit.md` — auditoria `ops_nv.py`; **`PCIIface reconhece 10de:2504? YES`** (`0x2504 & 0xFF00 = 0x2500 ∈ lista`, `ops_nv.py:560` + `system.py:80`).
+- `tinygrad-nv/nv-stack-map.md` — caminho real Tensor→…→GA106 por camada (classe/arquivo/função/OS-/transport-/gen-specific).
+- `tinygrad-nv/nvdev-audit.md` — NVDev por subsistema (init/mem/submit/GSP); **init sem `nvidia.ko`: CONFIRMED** (`PCIDevice` dá unbind e aborta se driver ligado; `NVKIface` é quem usa `/dev/nvidia*`).
+- `tinygrad-nv/ga106-gap-analysis.md` — tabela 10 etapas × Nouveau × NVIDIA Open × NVDev × nós: **10/10 Ampere genérico no tinygrad, 0/10 GA106-específico** (cai em GA1/ga102, FW `ga102`).
+- `tinygpu/pci-transport-contract.md` — contrato real extraído de `system.py` (tabela operação×chamada×implementação×necessária-p/GA106).
+- `tinygpu/apl-remote-pci.md` — caminho `APLRemotePCIDevice`→TinyGPU.app→socket→dext→`IOPCIDevice`→GPU.
+- `tinygpu/remote-protocol.md` — `RemoteCmd` 0–12 (APL emite 1–7,11; `server.c` não implementa 0,8,9,10,12).
+- `tinygpu/binary-architecture.md` — estática do bundle (análise no Linux): dext `IOProviderClass=IOPCIDevice`, `IOPCIClassMatch=0x03000000`, `IOPCITunnelCompatible=True`, entitlements `0x10DE`/`0x1002` any-device, team `9YG3G8543N`; resto `REQUIRES_MACOS_INSPECTION`.
+- `tinygpu/why-usb4.md` — hipóteses: C+D CONFIRMED, A+B LIKELY, E FALSE, F UNCERTAIN.
+- `tinygpu/internal-pcie-gap.md` — gap exato: matching DriverKit antes de `Start_Impl` (interna nunca instancia `TinyGPUDriver`).
+- `macos/ADR-0002-tinygpu-reuse.md` — decisão **C — TinyGPU-compatible transport** (ADR-0001 SUPERSEDED); MAC-COMPUTE-0 = MEDIUM.
+- `tinygpu/project-impact.md` — artefatos antigos em STILL_REQUIRED/USEFUL_REFERENCE/REPLACED_BY_TINYGRAD/DEFERRED; Metal segue NÃO resolvido.
