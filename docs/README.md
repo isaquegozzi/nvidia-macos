@@ -31,3 +31,4 @@ Ver `SAFETY_MMIO_PREREQUISITES.md` (gate: enquanto `BLOCKED`, Fase 0 segue somen
 - `lab/recovery-plan.md` — Machine A/B, SSH, coleta de logs, escada de reinício; sem watchdog.
 - `lab/pcie-topology.md` — topologia PCIe read-only (2026-09-04): GPU max Gen4 x16, root-port `00:01.1` max Gen3 x16, current Gen1 x16 (era Gen2 no baseline) por ASPM; tabela canônica GT/s→Gen (`5.0`=Gen2).
 - `lab/nvidia-free-boot-test.md` — plano REVERSÍVEL DE UM ÚNICO BOOT (NÃO APLICADO, 2026-09-04): bootloader Limine 12.7.0, initramfs mkinitcpio com `MODULES+=(nvidia ...)` via chwd → exige `module_blacklist=` (`modprobe.blacklist` só não basta; `rd.driver.blacklist` é só-dracut); edição `E` no menu, sem persistir.
+- `lab/ssh-readiness.md` — prontidão SSH (somente leitura, 2026-09-04, nada habilitado): `sshd` instalado mas `inactive`+`disabled`, sem `:22`, sem `authorized_keys`, `ufw` ativo com regras UNKNOWN, alvo LAN `192.168.5.12`; gaps + comandos locais/remotos exatos.
