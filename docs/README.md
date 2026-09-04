@@ -57,3 +57,12 @@ Fontes pinadas: `tinygrad/tinygrad@e8c8ba1c` (2026-09-04), `tinygpu_releases@c0d
 - `tinygpu/internal-pcie-gap.md` — gap exato: matching DriverKit antes de `Start_Impl` (interna nunca instancia `TinyGPUDriver`).
 - `macos/ADR-0002-tinygpu-reuse.md` — decisão **C — TinyGPU-compatible transport** (ADR-0001 SUPERSEDED); MAC-COMPUTE-0 = MEDIUM.
 - `tinygpu/project-impact.md` — artefatos antigos em STILL_REQUIRED/USEFUL_REFERENCE/REPLACED_BY_TINYGRAD/DEFERRED; Metal segue NÃO resolvido.
+
+## Documentos Fase TGM0 — correção TunnelCompatible + inspeção macOS (2026-09-04, sessão Linux; ioreg pendente)
+
+- `fix(tinygpu)` — `IOPCITunnelCompatible` = suporte declarado (Apple: "supports Thunderbolt"), NÃO prova Thunderbolt-only; túnel real = `IOPCITunnelled`. Hipóteses: C→LIKELY, D→UNKNOWN; gap A/B/C em aberto.
+- `tinygpu/amd-igpu-match-risk.md` — veredito **RISK**: classe + entitlement `0x1002` casam a iGPU do desktop; **não instalar** a DEXT.
+- `tinygpu/direct-reuse-assessment.md` — TinyGPU-original→RTX interna→NVDev = **UNLIKELY** + PROVADO vs NÃO PROVADO.
+- Reuse corrigido (ADR-0002 §8): CODE_PATH_COVERAGE 100% vs HARDWARE_VALIDATION 0% (macOS tudo; GA106-Linux NVDev tudo); **MAC-COMPUTE-0 = LOW**.
+- `macos/hardware/ga106-ioreg-runbook.md` — procedimento somente-leitura p/ Tahoe (snapshots em `artifacts/macos/`, gitignored); **PENDING_MACOS** (sessão atual é Linux).
+- `scripts/tinygpu-match-check.py` — simulador estático (`--self-test`: ALL PASS).
