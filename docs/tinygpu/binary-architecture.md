@@ -133,3 +133,26 @@ Bug TG0: §3 leu `IOPCITunnelCompatible=True` como prova de "Thunderbolt-only no
 - A presença real de túnel é indicada por **`IOPCITunnelled` no IORegistry** (propriedade do dispositivo/caminho, verificável via `getProperty(kIOPCITunnelledKey, ..., kIORegistryIterateRecursively | kIORegistryIterateParents)` ou `ioreg` — mesmo guia Apple).
 
 O que permanece `CONFIRMED` neste doc: o fato decodificado (plist do dext = source `Info.plist:5-35@e8c8ba1c`: `IOPCIClassMatch=0x03000000`, `IOPCITunnelCompatible=True`, sem `IOPCI*Match` por ID) e a ausência de `ASM/2464/USB4/Thunderbolt` nas strings do dext (§7 — que adicionalmente implica: nenhuma evidência TG0 de checagem de `IOPCITunnelled` no driver). O que passa a `UNKNOWN`: que a flag excluiria GPUs internas não-tunneled do matching. Numeração das seções anteriores preservada (citações §3/§5/§7 de outros docs continuam válidas como localização do fato, não da conclusão superada).
+
+## 10. Adendo TGM0 (2026-09-04) — tabela personality completa do dext (re-extraída)
+
+> Re-extração TGM0 em Linux a partir do re-download pinado (`/tmp/opencode/tgm0-app/TinyGPU.zip`, sha256 `0c47285e…21f`, extraído em `/tmp/tgm0-extract`). Ferramentas: `python3 plistlib`, `file`, busca binária por `IOPCI`/`IOProbe`/`IOMatch`/`IOProvider`/`IOUser`/`Tunnel`. Personality única `TinyGPUDriver`. Seções §0–§9 acima NÃO alteradas.
+
+| Chave | Valor TGM0 (`TinyGPUDriver`) | Como verificado |
+|---|---|---|
+| `IOProviderClass` | `IOPCIDevice` | `CONFIRMED` (decode `plistlib`) |
+| `IOPCIClassMatch` | `0x03000000` | `CONFIRMED` (único critério PCI no plist) |
+| `IOPCIPrimaryMatch` | `ABSENT` | `CONFIRMED` (0 ocorrências no plist; vive só no entitlement §5) |
+| `IOPCIMatch` | `ABSENT` | `CONFIRMED` (0 ocorrências) |
+| `IOPCISecondaryMatch` | `ABSENT` | `CONFIRMED` (0 ocorrências) |
+| `IOPCITunnelCompatible` | `True` | `CONFIRMED` (declara suporte Thunderbolt, não exclusão — §9) |
+| `IOProbeScore` | `ABSENT` | `CONFIRMED` (0 ocorrências no plist e no binário) |
+| `IOUserClass` | `TinyGPUDriver` | `CONFIRMED` |
+| `IOUserServerName` | `org.tinygrad.tinygpu.Driver` | `CONFIRMED` |
+| UserClient | `TinyGPUDriverUserClient` (`TinyGPUDriverUserClientProperties {IOClass=IOUserUserClient, IOUserClass=TinyGPUDriverUserClient}`) | `CONFIRMED` |
+| `IOMatchCategory` | `TinyGPUDriver` | `CONFIRMED` |
+| Extras presentes | `IOClass=IOUserService`, `IOResourceMatch=IOKit`, `CFBundleIdentifier=org.tinygrad.tinygpu.driver2` | `CONFIRMED` |
+
+Top-level dext (`CONFIRMED`): `CFBundlePackageType=DEXT`, `CFBundleVersion=3`, `CFBundleShortVersionString=1.0.0`, `OSBundleUsageDescription="TinyGPU Driver"`, `OSMinimumDriverKitVersion=21.0`, `DTPlatformName=driverkit`, `DTSDKName=driverkit25.2` (`DTSDKBuild` vazio `''`), `DTPlatformVersion=25.2`. App `Info.plist` (XML): `CFBundleIdentifier=org.tinygrad.tinygpu.installer`, zero chaves `IOPCI*` (`CONFIRMED`).
+
+Divergências vs §3 (TG0): **nenhuma nos valores** — §3 já registrava corretamente `IOPCIClassMatch` único, ausência de `IOPCI*Match` por ID, `IOPCITunnelCompatible`, `IOMatchCategory`, `IOUserClass`/`IOUserServerName`/UserClient. Adições TGM0: `IOProbeScore=ABSENT` explícito (não mencionado em TG0), `ABSENT` explícito por coluna pedida, `DTSDKBuild=''` e `IOResourceMatch`/`IOClass` reafirmados. Análise de risco da iGPU AMD `1002:1638` a partir desta tabela: ver `docs/tinygpu/amd-igpu-match-risk.md` (veredito `RISK`; NÃO instalar).
