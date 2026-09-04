@@ -909,6 +909,8 @@ std::string render_txt(const Snapshot& s) {
                                 : "unknown")
      << "\n";
   os << "  status: " << s.readiness.status << "\n";
+  os << "  desktop_independence: " << s.readiness.desktop_independence << "\n";
+  os << "  mmio_readiness: " << s.readiness.mmio_readiness << "\n";
   os << "Provenance:\n";
   os << "  snapshot reproduzivel: reexecute `ga106-lab baseline [--out-dir "
         "DIR] [--stdout]` no mesmo host para comparar\n";
@@ -1053,7 +1055,11 @@ std::string render_json(const Snapshot& s) {
   } else {
     os << "    \"target_gpu_active_connectors\": null,\n";
   }
-  os << "    \"status\": \"" << json_escape(s.readiness.status) << "\"\n";
+  os << "    \"status\": \"" << json_escape(s.readiness.status) << "\",\n";
+  os << "    \"desktop_independence\": \""
+     << json_escape(s.readiness.desktop_independence) << "\",\n";
+  os << "    \"mmio_readiness\": \"" << json_escape(s.readiness.mmio_readiness)
+     << "\"\n";
   os << "  }\n";
   os << "}\n";
   return os.str();

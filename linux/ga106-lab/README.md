@@ -143,12 +143,65 @@ Veredito fail-closed: `BLOCKED` por padrão; `READY_FOR_NEXT_PHASE` somente se
 ativo usado E sem clientes desktop no alvo. Outra GPU sozinha nunca implica
 `READY`. Exit sempre 0 em coleta bem-sucedida (relato, não gate).
 
+### Modelo dual: independência do desktop vs prontidão MMIO (Fase 0b)
+
+Dois conceitos separados, ambos somente leitura, impressos no bloco
+`Readiness split`:
+
+- `Desktop independence: READY` quando **todas** valerem — render dominante
+  do compositor na AMD (`alt_render_fds > target_render_fds`, mínimo
+  `alt>=1`) E fb owner AMD/amdgpu E monitor ativo na AMD (`alt_active>=1`)
+  E RTX com 0 conectores ativos E `boot_vga` do alvo=`0`.
+- `MMIO readiness: BLOCKED` **sempre** nesta fase, com razões explícitas:
+  ownership PCI com driver NVIDIA vinculado (unbind proibido) + SSH não
+  testado externamente + teste de boot sem NVIDIA pendente. O hook
+  `mmio_release_conditions_met()` centraliza as condições futuras e hoje
+  retorna sempre `false` — nenhum caminho afrouxa isso agora.
+- `PCI ownership: <driver> (...)` resume driver vinculado + `boot_vga`
+  alvo/alt a partir de campos já coletados (nunca opera hardware).
+
+**Por que FDs residuais não bloqueiam o desktop.** Estado observado
+pós-reboot: `boot_vga` AMD=`1`, fb só `amdgpudrmfb`, RTX com 0 conectores,
+`glxinfo` na AMD, render dominante AMD (ex.: 20 fds `renderD129` vs 2 fds
+`renderD128`) — mas o `gnome-shell` mantém ~2 fds `renderD128` + `card1` (+
+`/dev/nvidia*`). Justificativa registrada no código: isso é compatível com
+a enumeração multi-GPU do Mutter, que lista todos os nós DRM; só a
+dominância `renderD*` (GL/EGL real) conta como sinal. Nada além do
+observável é afirmado (sem alegar mecanismo interno). O `Verdict` legado e
+o `desktop_gpu` seguem fail-closed de propósito (qualquer toque no alvo
+bloqueia) — o sinal novo vive em `desktop_independence` +
+`desktop_render_note`.
+
+Exemplo real pós-reboot (trecho do split, bancada dual AMD boot VGA + RTX
+sem conectores):
+
+```
+Readiness split (Fase 0, somente leitura):
+  Desktop independence: READY
+    - render dominante do compositor na AMD: sim (fds renderD* do desktop: alvo=2 alt=20; exige alt>=1 e alt>alvo)
+    - fb owner AMD/amdgpu: sim (amdgpudrmfb)
+    - monitor ativo na AMD: sim (1: card2-HDMI-A-2)
+    - RTX com 0 conectores ativos: sim (0: nenhum)
+    - boot_vga do alvo=0: sim (alvo=0 alt=1)
+    - nota: fds residuais do compositor no alvo (...) NAO bloqueiam — compativeis com enumeracao multi-GPU do Mutter (...)
+    - Desktop independence: READY (todas as condicoes valem; fds residuais de enumeracao nao bloqueiam)
+  MMIO readiness: BLOCKED
+    - PCI ownership: driver 'nvidia' ainda vinculado ao alvo 0000:01:00.0 (unbind proibido nesta fase)
+    - SSH externo nao testado a partir de outra maquina (recuperacao remota nao verificada)
+    - teste de boot sem NVIDIA pendente (inicializacao apenas com AMD nao verificada de ponta a ponta)
+    - MMIO readiness: BLOCKED (fase atual nao autoriza liberacao; ver hook mmio_release_conditions_met)
+  PCI ownership: nvidia (driver vinculado ao alvo 0000:01:00.0; boot_vga alvo=0 alt=1)
+```
+
 O `baseline` agrega o bloco `lab_readiness` com os mesmos sinais
 (`alternative_gpu_present`, `desktop_gpu`, `target_gpu_used_by_desktop`,
 `target_gpu_active_connectors`, `status` em
-`BLOCKED`/`READY_FOR_NEXT_PHASE`/`unknown`; `null`/`unknown` quando não
-detectável, sem inventar). No `--compare`, chaves `lab_readiness.*` são
-classe `DYNAMIC`.
+`BLOCKED`/`PARTIALLY_READY`/`READY_FOR_NEXT_PHASE`/`unknown`, mais
+`desktop_independence` em `READY`/`BLOCKED`/`unknown` e `mmio_readiness`
+sempre `BLOCKED` nesta fase; `null`/`unknown` quando não detectável, sem
+inventar). No `--compare`, chaves `lab_readiness.*` são classe `DYNAMIC`
+(comparação continua determinística: mapa ordenado, `meta.timestamp_utc`
+ignorado).
 
 Exemplo real (bancada atual: RTX é boot VGA, fb `nvidia-drmdrmfb`, 2
 conectores ativos, GNOME rodando, sem `1002:1638`):
@@ -202,7 +255,9 @@ E no `baseline.json`:
   "desktop_gpu": "0000:01:00.0",
   "target_gpu_used_by_desktop": true,
   "target_gpu_active_connectors": 2,
-  "status": "BLOCKED"
+  "status": "BLOCKED",
+  "desktop_independence": "BLOCKED",
+  "mmio_readiness": "BLOCKED"
 }
 ```
 

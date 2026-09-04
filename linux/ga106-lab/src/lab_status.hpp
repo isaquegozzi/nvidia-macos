@@ -11,6 +11,21 @@
 // condicoes valerem (iGPU presente E sessao grafica na iGPU E RTX sem
 // conector ativo usado E sem clientes desktop no alvo). A mera existencia
 // de outra GPU nunca implica READY.
+// Separacao Fase 0b (somente leitura): "independencia do desktop" e
+// "prontidao MMIO" sao dois conceitos distintos e evoluem separado.
+//  - DESKTOP_INDEPENDENCE=READY quando: render dominante do compositor na
+//    AMD (alt_render_fds > target_render_fds, minimo alt>=1) E fb owner
+//    AMD/amdgpu E monitor ativo na AMD (alt_active>=1) E RTX com 0
+//    conectores ativos E boot_vga do alvo=0. FDs residuais do compositor
+//    no alvo NAO bloqueiam: o observavel pos-reboot e que o Mutter
+//    (gnome-shell) enumera todas as GPUs via DRM — mantem fds em cardN de
+//    ambas e minoria renderD* na RTX (~2) enquanto a massa renderD*
+//    (GL/EGL) e dominante na AMD (~20). So a dominancia renderD* conta
+//    como sinal; nenhum mecanismo interno alem do observavel e afirmado.
+//  - MMIO_READINESS continua BLOCKED sempre nesta fase: ownership PCI com
+//    driver NVIDIA vinculado (desvinculacao proibida) + SSH nao testado
+//    externamente + boot sem NVIDIA pendente. Ver
+//    mmio_release_conditions_met (hook futuro, hoje sempre false).
 
 #include <string>
 #include <vector>
@@ -73,6 +88,18 @@ struct LabStatus {
   bool session_on_alt = false;
   std::string verdict = "unknown";  // BLOCKED | PARTIALLY_READY | READY_FOR_NEXT_PHASE | unknown
   std::vector<std::string> verdict_reasons;
+  // Conceito 1: independencia do desktop (nao confundir com `verdict`, que
+  // segue fail-closed sobre qualquer toque no alvo).
+  std::string desktop_independence = "unknown";  // READY | BLOCKED | unknown
+  std::vector<std::string> desktop_reasons;
+  // Conceito 2: prontidao MMIO — sempre BLOCKED nesta fase (ver hook).
+  std::string mmio_readiness = "BLOCKED";  // BLOCKED (fase atual)
+  std::vector<std::string> mmio_reasons;
+  // Sinais que sustentam o conceito 1 (massa renderD*, conectores ativos).
+  int target_render_fds = 0;
+  int alt_render_fds = 0;
+  int target_active_connectors = 0;
+  int alt_active_connectors = 0;
 };
 
 // Bloco agregado ao baseline.json (tipos JSON proprios: bool/int/null).
@@ -85,6 +112,8 @@ struct LabReadiness {
   bool has_active = false;
   int active_count = 0;
   std::string status = "unknown";  // BLOCKED | READY_FOR_NEXT_PHASE | unknown
+  std::string desktop_independence = "unknown";  // READY | BLOCKED | unknown
+  std::string mmio_readiness = "BLOCKED";  // sempre BLOCKED nesta fase
 };
 
 // Coleta o estado atual (somente leitura). Nunca falha por ausencia de
@@ -93,6 +122,18 @@ LabStatus collect_lab_status();
 
 // Deriva o bloco lab_readiness do estado coletado.
 LabReadiness lab_readiness_from(const LabStatus& st);
+
+// Hook futuro da prontidao MMIO: retorna true somente quando TODAS as
+// condicoes de liberacao valerem (desktop independente + ownership PCI fora
+// do driver NVIDIA com desvinculacao AUTORIZADA pela fase futura + SSH
+// testado externamente + boot sem NVIDIA verificado). Fase 0: sempre
+// false — nenhum caminho de execucao afrouxa isso agora, e nenhum opera
+// hardware (somente leitura).
+bool mmio_release_conditions_met(const LabStatus& st);
+
+// Resumo read-only do ownership PCI a partir de campos ja coletados
+// (driver vinculado + boot_vga alvo/alt). Nunca opera hardware.
+std::string pci_ownership_summary(const LabStatus& st);
 
 // Renderiza o relatorio humano do `lab-status`.
 std::string render_lab_status(const LabStatus& st);

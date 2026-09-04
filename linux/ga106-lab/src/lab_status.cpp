@@ -331,6 +331,12 @@ LabStatus collect_lab_status() {
       st.verdict_reasons.push_back(
           std::string("alvo ") + kLabTargetBdf +
           " nao detectavel em /sys/bus/pci/devices (sem inventar estado)");
+      st.desktop_independence = "unknown";
+      st.desktop_reasons.push_back(
+          "alvo nao detectavel; independencia do desktop nao avaliavel");
+      st.mmio_readiness = "BLOCKED";
+      st.mmio_reasons.push_back(
+          "alvo nao detectavel; prontidao MMIO mantida BLOCKED por padrao");
       return st;  // sem alvo, o resto nao e avaliavel
     }
     st.target_present = true;
@@ -586,6 +592,85 @@ LabStatus collect_lab_status() {
       (compositor_on_alt || fb_on_alt || st.alt.boot_vga == "1" ||
        (alt_active > 0 && target_active == 0));
 
+  // --- conceito 1: independencia do desktop (somente leitura) ---
+  // READY quando TODAS valerem: render dominante do compositor na AMD
+  // (alt_render_fds > target_render_fds, com minimo alt>=1) E fb owner
+  // AMD/amdgpu E monitor ativo na AMD (alt_active>=1) E RTX com 0
+  // conectores ativos E boot_vga do alvo=0.
+  // FDs residuais do compositor no alvo NAO bloqueiam: o observavel e que
+  // o Mutter (gnome-shell) enumera todas as GPUs via DRM — mantem fds em
+  // cardN de ambas e minoria renderD* na RTX — enquanto a massa renderD*
+  // (GL/EGL real) e dominante na AMD. So a dominancia renderD* conta como
+  // sinal; nenhum mecanismo interno alem do observavel e afirmado aqui.
+  st.target_render_fds = target_render_fds;
+  st.alt_render_fds = alt_render_fds;
+  st.target_active_connectors = target_active;
+  st.alt_active_connectors = alt_active;
+  {
+    auto& rs = st.desktop_reasons;
+    const bool render_alt_dominant = st.alt.present && alt_render_fds >= 1 &&
+                                     alt_render_fds > target_render_fds;
+    rs.push_back("render dominante do compositor na AMD: " +
+                 std::string(render_alt_dominant ? "sim" : "nao") +
+                 " (fds renderD* do desktop: alvo=" +
+                 std::to_string(target_render_fds) +
+                 " alt=" + std::to_string(alt_render_fds) +
+                 "; exige alt>=1 e alt>alvo)");
+    rs.push_back(std::string("fb owner AMD/amdgpu: ") +
+                 (fb_on_alt ? "sim (" + st.fb_owner + ")"
+                            : "nao (" + st.fb_owner + ")"));
+    rs.push_back("monitor ativo na AMD: " +
+                 std::string(st.alt.present && alt_active >= 1 ? "sim"
+                                                               : "nao") +
+                 " (" + std::to_string(alt_active) + ": " +
+                 join_names(st.alt.connectors, true, "nenhum") + ")");
+    rs.push_back("RTX com 0 conectores ativos: " +
+                 std::string(target_active == 0 ? "sim" : "nao") + " (" +
+                 std::to_string(target_active) + ": " +
+                 join_names(st.connectors, true, "nenhum") + ")");
+    rs.push_back("boot_vga do alvo=0: " +
+                 std::string(st.boot_vga == "0" ? "sim" : "nao") +
+                 " (alvo=" + st.boot_vga + " alt=" + st.alt.boot_vga + ")");
+    rs.push_back(
+        "nota: fds residuais do compositor no alvo (observado: gnome-shell "
+        "com fds em cardN de ambas as GPUs e minoria renderD* na RTX) NAO "
+        "bloqueiam — compativeis com enumeracao multi-GPU do Mutter, que "
+        "lista todos os nos DRM; so a dominancia renderD* (GL/EGL) conta "
+        "como sinal, sem afirmar mecanismo interno alem do observavel");
+    if (!st.alt.present) {
+      st.desktop_independence = "BLOCKED";
+      rs.push_back("Desktop independence: BLOCKED (sem alternativa AMD)");
+    } else if (render_alt_dominant && fb_on_alt && alt_active >= 1 &&
+               target_active == 0 && st.boot_vga == "0") {
+      st.desktop_independence = "READY";
+      rs.push_back("Desktop independence: READY (todas as condicoes valem; "
+                   "fds residuais de enumeracao nao bloqueiam)");
+    } else {
+      st.desktop_independence = "BLOCKED";
+      rs.push_back("Desktop independence: BLOCKED (ao menos uma condicao "
+                   "falha; ver itens acima)");
+    }
+  }
+
+  // --- conceito 2: prontidao MMIO (sempre BLOCKED nesta fase) ---
+  // Razoes explicitas; nenhuma pode ser afrouxada sem fase futura que
+  // autorize cada item. Nenhuma operacao em hardware aqui — so relato.
+  {
+    auto& rs = st.mmio_reasons;
+    rs.push_back("PCI ownership: driver '" + st.kernel_driver +
+                 "' ainda vinculado ao alvo " + kLabTargetBdf +
+                 " (unbind proibido nesta fase)");
+    rs.push_back("SSH externo nao testado a partir de outra maquina "
+                 "(recuperacao remota nao verificada)");
+    rs.push_back("teste de boot sem NVIDIA pendente (inicializacao apenas "
+                 "com AMD nao verificada de ponta a ponta)");
+    st.mmio_readiness =
+        mmio_release_conditions_met(st) ? "READY" : "BLOCKED";
+    rs.push_back("MMIO readiness: " + st.mmio_readiness +
+                 " (fase atual nao autoriza liberacao; ver hook "
+                 "mmio_release_conditions_met)");
+  }
+
   // --- veredito (fail-closed) ---
   {
     auto& rs = st.verdict_reasons;
@@ -680,7 +765,31 @@ LabReadiness lab_readiness_from(const LabStatus& st) {
     r.active_count = count_active(st.connectors);
   }
   r.status = st.verdict;
+  r.desktop_independence = st.desktop_independence;
+  r.mmio_readiness = st.mmio_readiness;
   return r;
+}
+
+bool mmio_release_conditions_met(const LabStatus& st) {
+  // Hook para fases futuras. A liberacao exigiria TODAS, sem afrouxar:
+  //  1. desktop_independence == "READY";
+  //  2. ownership PCI fora do driver NVIDIA, com desvinculacao AUTORIZADA
+  //     pela fase futura (proibida na Fase 0);
+  //  3. SSH testado externamente a partir de outra maquina;
+  //  4. boot sem NVIDIA verificado de ponta a ponta.
+  // Fase 0: sempre false. Somente leitura — nenhum caminho aqui opera
+  // hardware, altera driver ou toca em BAR.
+  (void)st;
+  return false;
+}
+
+std::string pci_ownership_summary(const LabStatus& st) {
+  // Resumo read-only de campos ja coletados; nunca opera hardware.
+  std::ostringstream os;
+  os << st.kernel_driver << " (driver vinculado ao alvo " << kLabTargetBdf
+     << "; boot_vga alvo=" << st.boot_vga << " alt=" << st.alt.boot_vga
+     << ")";
+  return os.str();
 }
 
 std::string render_lab_status(const LabStatus& st) {
@@ -766,6 +875,12 @@ std::string render_lab_status(const LabStatus& st) {
   if (!st.desktop_render_note.empty()) {
     os << "Desktop render: " << st.desktop_render_note << "\n";
   }
+  os << "Readiness split (Fase 0, somente leitura):\n";
+  os << "  Desktop independence: " << st.desktop_independence << "\n";
+  for (const auto& r : st.desktop_reasons) os << "    - " << r << "\n";
+  os << "  MMIO readiness: " << st.mmio_readiness << "\n";
+  for (const auto& r : st.mmio_reasons) os << "    - " << r << "\n";
+  os << "  PCI ownership: " << pci_ownership_summary(st) << "\n";
   os << "Verdict: " << st.verdict << "\n";
   for (const auto& r : st.verdict_reasons) os << "  - " << r << "\n";
   os << "  (READY_FOR_NEXT_PHASE exige iGPU presente E sessao na iGPU E "

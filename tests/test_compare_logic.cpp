@@ -94,6 +94,12 @@ int main() {
         "classe clocks futura");
   check(ga106lab::is_ignored_compare_key("meta.timestamp_utc"),
         "timestamp ignorado");
+  check(classify_compare_key("lab_readiness.desktop_independence") ==
+            CompareClass::kDynamic,
+        "classe desktop_independence (split desktop/MMIO)");
+  check(classify_compare_key("lab_readiness.mmio_readiness") ==
+            CompareClass::kDynamic,
+        "classe mmio_readiness (split desktop/MMIO)");
 
   // 4. Mapas identicos (exceto timestamp) => sem diffs.
   {
