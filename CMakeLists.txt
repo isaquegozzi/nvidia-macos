@@ -15,6 +15,10 @@ option(BUILD_TESTING "Build smoke tests" ON)
 
 add_subdirectory(common)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  add_subdirectory(linux/ga106-lab)
+endif()
+
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
   include(CTest)
   add_subdirectory(tests)
