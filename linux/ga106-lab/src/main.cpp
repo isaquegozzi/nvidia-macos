@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "baseline.hpp"
+#include "baseline_compare.hpp"
 #include "drm_discovery.hpp"
 #include "pci_discovery.hpp"
 
@@ -24,6 +25,12 @@ int usage() {
   std::cerr << kTag
             << "   baseline gera snapshot reproduzivel em "
                "artifacts/baselines/<timestamp>/\n";
+  std::cerr << kTag
+            << " uso: ga106-lab baseline --compare OLD.json NEW.json "
+               "[--strict]\n";
+  std::cerr << kTag
+            << "   baseline --compare diffs deterministicos por classe "
+               "(--strict so falha em IDENTITY/STATIC)\n";
   return 2;
 }
 
@@ -129,6 +136,10 @@ int main(int argc, char** argv) {
   if (argc >= 2 && std::string(argv[1]) == "baseline") {
     std::vector<std::string> rest;
     for (int i = 2; i < argc; ++i) rest.emplace_back(argv[i]);
+    if (!rest.empty() && rest[0] == "--compare") {
+      rest.erase(rest.begin());
+      return ga106lab::run_baseline_compare(rest);
+    }
     return ga106lab::run_baseline(rest);
   }
   if (argc == 2 &&

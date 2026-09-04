@@ -41,6 +41,7 @@ demais `10de` → `NVIDIA GPU`/`unknown`. Sem dado → `"unknown"`, sem chute.
 ./build/linux/ga106-lab/ga106-lab info
 ./build/linux/ga106-lab/ga106-lab baseline --stdout
 ./build/linux/ga106-lab/ga106-lab baseline --out-dir /tmp/ga106-baseline
+./build/linux/ga106-lab/ga106-lab baseline --compare /tmp/ga106-old/baseline.json /tmp/ga106-new/baseline.json [--strict]
 ```
 
 ## baseline — snapshot reproduzível (somente leitura)
@@ -73,6 +74,50 @@ campos expostos, sem interagir), Vulkan (excerto opcional), Logs
 (`journalctl -k` filtrado por `NVRM|nvidia|nvidia-drm|GSP|PCIe|IOMMU|Xid|GPU`,
 máx 100 linhas), In-use (`nvidia-smi` compute-apps + holders `/dev/dri` via
 `/proc/*/fd`, só leitura, nenhuma ação sobre processos).
+
+## baseline --compare — diff determinístico (somente leitura)
+
+`ga106-lab baseline --compare OLD.json NEW.json [--strict]` achata os dois
+`baseline.json` com parser manual mínimo próprio (sem dependência externa,
+ver `src/json_flat.{hpp,cpp}`) em mapa ordenado — comparação determinística
+— e classifica cada chave em `IDENTITY` (BDF, vendor/device/subsys/rev,
+UUID), `STATIC` (layout de BARs, `max_link_*`, resizable, `bar1_aperture`),
+`SEMI_STATIC` (versão de driver, firmware GSP exposto, VBIOS, kernel e demais
+configs) ou `DYNAMIC` (link atual, VRAM em uso, conectores, processos/holders,
+logs, vulkan, `lab_readiness`; inclui `temp`/`clocks` se um dia coletados).
+Saída em seções com `unchanged` ou diffs `a → b`; `meta.timestamp_utc` é
+ignorado (sempre difere). Diferenças `DYNAMIC` nunca são erro crítico.
+`--strict` retorna exit != 0 **apenas** se `IDENTITY` ou `STATIC` mudar, com
+mensagem explicando (modo normal sempre retorna 0 em compare bem-sucedido).
+
+```sh
+./build/linux/ga106-lab/ga106-lab baseline --compare /tmp/ga106-old/baseline.json /tmp/ga106-new/baseline.json
+./build/linux/ga106-lab/ga106-lab baseline --compare /tmp/ga106-old/baseline.json /tmp/ga106-new/baseline.json --strict; echo "exit=$?"
+```
+
+Exemplo real (dois snapshots da bancada, segundos de diferença):
+
+```
+[ga106-lab] baseline compare
+  old: /tmp/ga106-snap-old/baseline.json
+  new: /tmp/ga106-snap-new/baseline.json
+  mode: normal
+IDENTITY (0 diferenca(s)):
+  unchanged
+STATIC (0 diferenca(s)):
+  unchanged
+SEMI_STATIC (0 diferenca(s)):
+  unchanged
+DYNAMIC (1 diferenca(s)):
+  pci.link_current_speed: 2.5 GT/s PCIe → 5.0 GT/s PCIe
+Summary: unchanged=159 identity=0 static=0 semi_static=0 dynamic=1
+Note: meta.timestamp_utc ignorado (sempre difere entre snapshots)
+Note: diferencas DYNAMIC nunca sao erro critico
+Result: differences found (nao critico em modo normal; use --strict para barrar em IDENTITY/STATIC)
+```
+
+(O link PCIe varia em runtime por economia de energia — exatamente o tipo de
+ruído que a classe `DYNAMIC` isola do gating `--strict`.)
 
 ## Exemplo de saida (bancada GA106 real, 0000:01:00.0)
 

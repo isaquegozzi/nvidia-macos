@@ -5,3 +5,13 @@ add_executable(test_common_smoke test_common_smoke.cpp)
 target_link_libraries(test_common_smoke PRIVATE nvidia_common)
 
 add_test(NAME common_smoke COMMAND test_common_smoke)
+
+add_executable(test_compare_logic test_compare_logic.cpp
+  ../linux/ga106-lab/src/json_flat.cpp
+  ../linux/ga106-lab/src/baseline_compare.cpp
+)
+target_include_directories(test_compare_logic PRIVATE
+  ../linux/ga106-lab/src
+)
+
+add_test(NAME compare_logic COMMAND test_compare_logic)

@@ -8,6 +8,8 @@ add_executable(ga106-lab
   src/pci_discovery.cpp
   src/drm_discovery.cpp
   src/baseline.cpp
+  src/json_flat.cpp
+  src/baseline_compare.cpp
 )
 
 target_link_libraries(ga106-lab PRIVATE nvidia_common)
