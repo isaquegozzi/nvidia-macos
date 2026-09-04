@@ -83,3 +83,27 @@ Bug TG0: este doc tratou `IOPCITunnelCompatible=true` como filtro que excluiria 
 
 No Tahoe alvo, com a GPU interna presente: `ioreg -l -w0` no nó `10de:2504` por `built-in`, `IOPCITunnelled`, `class-code`, `IOServiceDEXTEntitlements`, `AAPL,slot-name` (`driver-architecture-gate.md` §3.2, `ADR-0001` consequências); `systemextensionsctl list` para estado do dext; `log show --predicate tinygpu` para `Start_Impl`/`NewUserClient`.
 Em TG0 tudo acima é `REQUIRES_MACOS_INSPECTION` — [SUPERADO "o gap aqui é provado no nível de source/binário" — ver Correção TGM0/Resultado A/B/C] o que o source/binário prova é a presença declarativa (`IOPCIClassMatch`, `IOPCITunnelCompatible`, allowlist vendor, ausência de `...builtin`); qual perna excluiria a interna (se alguma) está em aberto até `ioreg` vivo.
+
+## Addendum TGM0-2 (2026-09-04) — A/B/C em aberto + o que o `ioreg` decidirá
+
+> Addendum, sem apagar. Resultado A/B/C acima permanece; aqui só se registra a matriz de decisão viva. Fase TGM0, SOMENTE `.md`. Nada executado.
+
+| Resultado | Enunciado (reafirmado) | Status TGM0-2 |
+|---|---|---|
+| A — tunneled casa | GPU USB4/TB instancia `TinyGPUDriver` (`Start_Impl` roda, serviço `"tinygpu"` existe) | Em aberto (`LIKELY` por declarado+documentado, sem observação viva) |
+| B — interna vs `IOPCITunnelCompatible` | Nó interno não-tunneled é excluído do matching pela presença de `IOPCITunnelCompatible=true` | Em aberto (`UNKNOWN` — exclusão não documentada, sem checagem de `IOPCITunnelled` no driver/server) |
+| C — interna vs `built-in` | Nó interno é excluído por `built-in` sem isenção `...builtin` | Em aberto (`UNCERTAIN` — mecanismo `CONFIRMED` em `IOPCIDevice::matchPropertyTable`, aplicabilidade ao nó `10de:2504` depende de ACPI/OpenCore) |
+
+### Tabela propriedade→decide A/B/C (o que registrar no `ioreg` vivo, procedimento em `docs/macos/hardware/ga106-ioreg-runbook.md`)
+
+| Propriedade `ioreg` (nó `10de:2504`, `IOProviderClass=IOPCIDevice`) | O que registrar | Decide |
+|---|---|---|
+| `IOPCITunnelled` (presente/ausente, incluindo busca recursiva nos pais) | `YES` vs ausente no nó e nos pais | **A vs B**: presente sustenta A (caminho tunneled declarado); ausente coloca B em teste — se o dext shipped casar nó ausente, B=`FALSE`; se der MISS, B segue sustentado mas sem provar que a causa é o tunnel (vs C) |
+| `built-in` (presente/ausente, byte/booleano) | presente vs ausente no nó `10de:2504` | **C**: ausente ⇒ C não pode excluir aquele nó (C=`FALSE` ali); presente + dext sem `...builtin` ⇒ C prevê MISS (mecanismo gate §3.1) |
+| `class-code` (esperado `0x030000`) + `IOProviderClass` | valor hex + provider `IOPCIDevice` | **Pré-condição A/B/C**: se classe ≠ `0x030000`, todos dão MISS por classe, não por B/C; se `=0x030000`, classe não explica MISS |
+| `vendor-id` / `device-id` (`10de` / `0x2504`) | hex no nó | **Pré-condição entitlement**: se vendor fora de `[10de,1002]`, MISS é por entitlement, não por B/C; `10de:2504` passa na allowlist shipped (binary-architecture §5) |
+| `IOServiceDEXTEntitlements` (vivo) | array/dict exposto no nó | **Suporte B/C**: confirma allowlist viva vs shipped; ausência de `...builtin` vivo confirma perna C |
+| `AAPL,slot-name` | string (`Internal` vs outro/ausente) | **Contexto, não decide**: correlato de slot, sem poder de exclusão próprio |
+| Provedor/driver anexado (ex. `TinyGPUDriver` vs AMD/NVIDIA vs nenhum — ver "current provider" no runbook) | `IOService` filho + `CFBundleIdentifier` + `systemextensionsctl list` + `log show --predicate tinygpu` | **Desempate A/B/C**: `Start_Impl` log `ven/dev` + serviço `"tinygpu"` = A HIT; MISS + `built-in` presente = C favorecido; MISS + `built-in` ausente + `IOPCITunnelled` ausente = B favorecido (ainda sem provar mecanismo) |
+
+Regra de leitura: nenhuma propriedade isolada prova B (filtro tunnel) — B só se decide por **teste vivo** (shipped casa/não-casa nó não-tunneled com `built-in` ausente). C decide-se por `built-in` + ausência de `...builtin` + MISS. A decide-se por HIT observado em tunneled.
