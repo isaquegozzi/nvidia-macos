@@ -29,3 +29,4 @@ Ver `SAFETY_MMIO_PREREQUISITES.md` (gate: enquanto `BLOCKED`, Fase 0 segue somen
 - `lab/igpu-readiness.md` — investigação Cezanne somente leitura (2026-09-04): `1002:1638` ausente, `1002:1637` presente, boot VGA RTX `01:00.0`, sem `amdgpu`/DRM AMD; verdict `LIKELY` (firmware).
 - `lab/dual-gpu-setup.md` — alvo Vega=display/RTX=target, critérios de pronto + categorias genéricas de opções de firmware (nomes variam por fabricante).
 - `lab/recovery-plan.md` — Machine A/B, SSH, coleta de logs, escada de reinício; sem watchdog.
+- `lab/pcie-topology.md` — topologia PCIe read-only (2026-09-04): GPU max Gen4 x16, root-port `00:01.1` max Gen3 x16, current Gen1 x16 (era Gen2 no baseline) por ASPM; tabela canônica GT/s→Gen (`5.0`=Gen2).
