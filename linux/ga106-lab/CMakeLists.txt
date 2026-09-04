@@ -7,6 +7,7 @@ add_executable(ga106-lab
   src/main.cpp
   src/pci_discovery.cpp
   src/drm_discovery.cpp
+  src/baseline.cpp
 )
 
 target_link_libraries(ga106-lab PRIVATE nvidia_common)
