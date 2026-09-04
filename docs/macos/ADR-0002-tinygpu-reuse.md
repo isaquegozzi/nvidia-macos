@@ -120,3 +120,41 @@ Passagens deste ADR SUPERADAS como prova (texto original preservado acima, leitu
 - §3 "o bloqueio D é contornável pelo fork C" e §4 "why-usb4 = C+D CONFIRMED" / "Gap = matching... nunca instancia": mesma superação; vereditos de reuse% e PROVADO/NÃO PROVADO fora do matching seguem válidos.
 
 Status da decisão: **Estratégia C permanece ACEITA como PROPOSED documental**, mas sua premissa de bloqueio passa a `UNKNOWN`-dependente de `ioreg`/teste vivo. Follow-ups obrigatórios (§5) estendidos: além de `built-in`/`IOPCITunnelled` no `ioreg`, verificar empiricamente se o dext shipped casa (ou não) um nó não-tunneled — i.e., testar a perna B do Resultado A/B/C em vez de assumi-la.
+
+## 8. Addendum TGM0-2 (2026-09-04) — reuse% corrigido (`CODE_PATH_COVERAGE` vs `HARDWARE_VALIDATION`) + `MAC-COMPUTE-0` recalculado
+
+> Addendum, sem apagar. Texto §§0–7 preservado; `%` original passa a ler-se como `CODE_PATH_COVERAGE` (estático). Fase TGM0, SOMENTE `.md`. Nada executado.
+
+### 8.1 Duas métricas (definições)
+
+- `CODE_PATH_COVERAGE` = fração de etapas com implementação genérica Ampere reutilizável verbatim em `tinygrad@e8c8ba1c` (auditoria estática, sem HW). É o que o §2 mediu.
+- `HARDWARE_VALIDATION` = fração de etapas observadas em HW real com log/evidência datada (ex. `GSP_INIT_DONE`, `promote_ctx`, `sm_86`, `Start_Impl ven/dev`, `MAP_BAR` size real). Observação passiva `lspci`/sysfs prova existência, NÃO valida o caminho NVDev — não conta no numerador (ver notas).
+
+### 8.2 Tabela corrigida
+
+| Subsistema (§2) | `CODE_PATH_COVERAGE` (estático) | `HARDWARE_VALIDATION` macOS | `HARDWARE_VALIDATION` GA106 Linux (caminho NVDev) |
+|---|---|---|---|
+| identification (PCI detect + BOOT0/42) | 2/2 = 100% (`ops_nv.py:560` + `system.py:58-90`; `nvdev.py:112-116`) | 0/2 = **0%** (sem boot Tahoe, sem `ioreg`, sem `Start_Impl` — `REQUIRES_MACOS_INSPECTION`) | 0/2 = **0%** (aritmética `0x2504&0xFF00` verificada sem HW em `ops-nv-audit.md` §3; `BOOT0` nunca lido — `first-mmio-read.md` `BLOCKED`) |
+| GSP (Falcon boot + RM boot + RPC) | 5/5 = 100% (`ip.py:110-210,401-455,510-520,629-660`) | 0/5 = **0%** | 0/5 = **0%** (FW `ga102-570.144`, sem SHA `ga106`, sem `GSP_INIT_DONE` log — `ga106-gap-analysis.md` §26-30, `nvdev-audit.md` §6) |
+| memory (BAR mapping + VRAM alloc) | 2/2 = 100% (`nvdev.py:76,131-159`; `PCIIfaceBase:267-281`) | 0/2 = **0%** | 0/2 = **0%** (`BAR start/end/flags` sysfs passivo ≠ `map_bar`/`mmap` validado) |
+| MMU (page tables + VA + BAR1 janela) | 1/1 = 100% (`nvdev.py:124-147,69-72`; `ip.py:516-517,594-599`) | 0/1 = **0%** | 0/1 = **0%** |
+| FIFO (FIFO + GPFIFO + doorbell) | 2/2 = 100% (`ip.py:457-508`; `ops_nv.py:610-666,114-126`) | 0/2 = **0%** | 0/2 = **0%** (só RM, sem fallback; sem token/doorbell real) |
+| compute (compute + DMA + QMD) | 2/2 = 100% (`ops_nv.py:128-212,248-339`; classes `0xc56f/0xc7c0/0xc7b5`) | 0/2 = **0%** | 0/2 = **0%** (`sm_86` só via `_query_gpu_info:627-679` em HW, fora TG0) |
+| compiler (CUDA C + PTX + NAK) | 3/3 caminhos = 100% (`compiler_cuda.py:9,46-100`; `setup_nvcc_osx.sh`; `docs/tinygpu.md:43-53`) | 0/3 = **0%** (sem Docker+`PATH` exercitado no Tahoe) | 0/3 = **0%** (sem `PTX/cubin sm_86` gerado com evidência nesta bancada) |
+| PCI transport (socket + dext + sysmem) | 8/8 cmds APL = 100% protocolo; dext source ~95% (só matching muda) | 0/8 = **0%** (sem `tinygpu.sock` real, sem BAR/DMA vivo) | 0/8 = **0%** (caminho APL é macOS-only; no Linux o equivalente `serve.py` TCP nunca executado contra GA106 aqui) |
+
+Notas anti-inflação: (a) `docs/lab/pcie-topology.md` (`10de:2504`, BAR0 16M/BAR1 16G/BAR3 32M, Gen4-cap/Gen3-teto, `CONFIRMED` via `lspci`/sysfs) prova que a GPU existe e é legível passivamente — não prova que `PCIIface`/`NVDev`/`MAP_BAR`/`MMIO_READ` a operaram; por isso não entra no numerador. (b) `0/10 com quirk/SHA ga106` (`ga106-gap-analysis.md` §26-30) permanece: todo `CODE_PATH_COVERAGE` acima é genérico Ampere (`GA1/ga102`), confiança de SKU segue `UNKNOWN` (`support-matrix.md` §5).
+
+### 8.3 `MAC-COMPUTE-0` recalculado: `LOW` (antes `MEDIUM`)
+
+**Novo veredito: `MAC-COMPUTE-0 = LOW`.**
+
+Porquê: o `MEDIUM` do §3 assumia "caminho fechado no papel" com bloqueio D `CONFIRMED` + transporte com delta mínimo certo. Com a Correção TGM0 (D=`UNKNOWN`, C-externo=`LIKELY`, §7) + a distinção §8.2 (cobertura 100% estática, validação 0% viva), o fechamento deixa de existir no papel para o matching — resta cobertura de código intacta + três incógnitas vivas que só `ioreg`/HW resolvem. `LOW` = "hipótese testável com plano conhecido (`ioreg` → fork lab descartável → GSP log), sem nenhuma validação fim-a-fim". Não é `HIGH` (exigiria SKU verificado + `GSP_INIT_DONE`/`promote_ctx`/`sm_86` em log), não é `MEDIUM` (exigia bloqueio caracterizado + bring-up SKU-compatível ao menos plausível em HW), não é `BLOCKED` (nenhuma impossibilidade provada — B é `UNKNOWN`, C é `UNCERTAIN`, FW `ga102`-em-GA106 é `UNCERTAIN`, não `FALSE`).
+
+Três incertezas restantes (bloqueiam qualquer subida de nível):
+
+1. **Matching vivo (B `UNKNOWN` + C `UNCERTAIN`)** — o dext shipped casa o nó interno `10de:2504`? Depende de `built-in`/`IOPCITunnelled`/`IOServiceDEXTEntitlements` no Tahoe alvo + teste vivo (`Start_Impl`/`"tinygpu"` HIT/MISS). Ver `internal-pcie-gap.md` Addendum TGM0-2 e runbook `docs/macos/hardware/ga106-ioreg-runbook.md`.
+2. **FW/ctx GA106-como-`GA1`** — `gsp/bootloader/booter_load ga102-570.144` + golden image (`GET_CONTEXT_BUFFERS_INFO` + `promote_ctx`) + `SEND_PCAS_A`/`sm_86` aceitam GA106 sem quirk? Sem SHA `ga106` (`ip.py:172-173,402,426-428`) e sem `GSP_INIT_DONE` log, é `UNCERTAIN`.
+3. **Identificação e I/O reais no caminho TinyGPU** — `BOOT0 ≈ 0x176000A1` + `BOOT_42 arch 0x17/impl 6` + `BAR1`/`0x1183a4`/`0xbb0000`/IOVA `PrepareDMA(maxAddressBits=40)` nunca lidos via `MAP_BAR`/`MMIO_READ` no Tahoe (`first-mmio-read.md` `BLOCKED`); soma-se o risco display AMD `1002:1638` (`RISK`, `amd-igpu-match-risk.md` — NÃO instalar) como guarda-viva de qualquer teste.
+
+Referência stale registrada: `docs/tinygpu/project-impact.md` §2 cita `MAC-COMPUTE-0 (MEDIUM)` — passa a ler-se `LOW` por este addendum (arquivo alheio não editado neste commit).
