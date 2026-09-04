@@ -27,6 +27,12 @@ sem `O_RDWR` em recurso PCI, sem `mmap(PROT_WRITE)` em BAR.
   NUMA via `numa_node`, VRAM via fallback opcional somente-leitura.
 - `drm_discovery.{hpp,cpp}` — cruza `/sys/class/drm/card*` e `renderD*`
   com o BDF observado (symlink `device` + `MAJOR:MINOR` do arquivo `dev`).
+- `json_flat.{hpp,cpp}` — parser JSON manual mínimo (sem dependências) que
+  achata `baseline.json` em mapa ordenado para o `--compare` determinístico.
+- `baseline_compare.{hpp,cpp}` — diff por classes
+  IDENTITY/STATIC/SEMI_STATIC/DYNAMIC; `--strict` só barra em IDENTITY/STATIC.
+- `lab_status.{hpp,cpp}` — `lab-status` read-only (ownership, iGPU `1002:1638`,
+  veredito) + bloco `lab_readiness` reutilizado pelo `baseline`.
 - `main.cpp` — comando `info`, secoes GPU/Architecture/PCI/System/DRM/VRAM.
 
 Tabela arquitetura/chip (fonte: banco pci-ids, `pci.ids`, fabricante 10de):
@@ -93,6 +99,7 @@ mensagem explicando (modo normal sempre retorna 0 em compare bem-sucedido).
 ```sh
 ./build/linux/ga106-lab/ga106-lab baseline --compare /tmp/ga106-old/baseline.json /tmp/ga106-new/baseline.json
 ./build/linux/ga106-lab/ga106-lab baseline --compare /tmp/ga106-old/baseline.json /tmp/ga106-new/baseline.json --strict; echo "exit=$?"
+./build/linux/ga106-lab/ga106-lab lab-status
 ```
 
 Exemplo real (dois snapshots da bancada, segundos de diferença):
@@ -118,6 +125,86 @@ Result: differences found (nao critico em modo normal; use --strict para barrar 
 
 (O link PCIe varia em runtime por economia de energia — exatamente o tipo de
 ruído que a classe `DYNAMIC` isola do gating `--strict`.)
+
+## lab-status — ownership read-only + veredito (somente leitura)
+
+`ga106-lab lab-status` responde "quem usa a RTX agora?" sem tocar em nada.
+Alvo fixo `0000:01:00.0` (RTX 3060 `10de:2504` GA106); fontes sempre
+read-only: driver via readlink, `boot_vga`, `fb` via
+`/sys/class/graphics/fb*/name` (+ hint `dmesg | grep fbcon`, só leitura),
+nós DRM + `DRM primary` (heurística via holders `/proc`; `unknown` se não
+detectável — master DRM não é exposto pelo sysfs), processos GNOME via scan
+`/proc` dos comms (+ `nvidia-smi` compute-apps opcional), conectores ativos
+via `/sys/class/drm/card*-*/status`+`enabled`. A alternativa é a Cezanne
+`1002:1638` (driver + card DRM + conectores); se ausente → `NOT PRESENT`.
+
+Veredito fail-closed: `BLOCKED` por padrão; `READY_FOR_NEXT_PHASE` somente se
+**todas** valerem — iGPU presente E sessão gráfica na iGPU E RTX sem conector
+ativo usado E sem clientes desktop no alvo. Outra GPU sozinha nunca implica
+`READY`. Exit sempre 0 em coleta bem-sucedida (relato, não gate).
+
+O `baseline` agrega o bloco `lab_readiness` com os mesmos sinais
+(`alternative_gpu_present`, `desktop_gpu`, `target_gpu_used_by_desktop`,
+`target_gpu_active_connectors`, `status` em
+`BLOCKED`/`READY_FOR_NEXT_PHASE`/`unknown`; `null`/`unknown` quando não
+detectável, sem inventar). No `--compare`, chaves `lab_readiness.*` são
+classe `DYNAMIC`.
+
+Exemplo real (bancada atual: RTX é boot VGA, fb `nvidia-drmdrmfb`, 2
+conectores ativos, GNOME rodando, sem `1002:1638`):
+
+```
+[ga106-lab] lab-status for 0000:01:00.0
+Target GPU:
+  BDF: 0000:01:00.0 (present)
+  Vendor/Device: 0x10de / 0x2504 (esperado 10de:2504 GA106: match)
+  Subsystem: 0x10de:0x2504
+  Revision: 0xa1
+Ownership (read-only):
+  Kernel driver: nvidia (via driver readlink)
+  boot_vga: 1
+  fb owner: nvidia-drmdrmfb (via /sys/class/graphics/fb*/name)
+  fbcon hint: unknown (dmesg indisponivel ou sem linhas fbcon)
+  DRM nodes:
+    card1 /dev/dri/card1 226:1 slot=0000:01:00.0
+    renderD128 /dev/dri/renderD128 226:128 slot=0000:01:00.0
+  DRM primary: card1 (via holder 2944 gnome-shell)
+    note: heuristica read-only: unico card do alvo com fd do compositor; master DRM nao e exposto pelo sysfs
+  Active connectors (status+enabled):
+    card1-DP-1: status=connected enabled=enabled [ACTIVE]
+    card1-DP-2: status=disconnected enabled=disabled
+    card1-DP-3: status=disconnected enabled=disabled
+    card1-HDMI-A-1: status=connected enabled=enabled [ACTIVE]
+  ...
+Alternative GPU (1002:1638 Cezanne):
+  NOT PRESENT (nenhum 0x1002:0x1638 em /sys/bus/pci/devices)
+Desktop GPU: 0000:01:00.0
+Verdict: BLOCKED
+  - alvo 0000:01:00.0 confere (10de:2504 GA106)
+  - kernel driver do alvo: nvidia
+  - boot_vga do alvo: 1
+  - fb owner: nvidia-drmdrmfb
+  - conectores ativos no alvo: 2 (card1-DP-1, card1-HDMI-A-1)
+  - processos desktop visiveis (/proc): 10
+  - holders desktop nos fds DRM do alvo: sim
+  - alternativa 1002:1638 NOT PRESENT (nenhum 0x1002:0x1638 em /sys/bus/pci/devices)
+  - sessao grafica na iGPU: nao
+  - clientes desktop no alvo: sim
+  - compute-apps nvidia-smi: 0 processo(s) desktop
+  - veredito BLOCKED: sem iGPU alternativa (e presenca isolada de outra GPU jamais implicaria READY)
+```
+
+E no `baseline.json`:
+
+```json
+"lab_readiness": {
+  "alternative_gpu_present": false,
+  "desktop_gpu": "0000:01:00.0",
+  "target_gpu_used_by_desktop": true,
+  "target_gpu_active_connectors": 2,
+  "status": "BLOCKED"
+}
+```
 
 ## Exemplo de saida (bancada GA106 real, 0000:01:00.0)
 

@@ -11,6 +11,7 @@
 #include "baseline.hpp"
 #include "baseline_compare.hpp"
 #include "drm_discovery.hpp"
+#include "lab_status.hpp"
 #include "pci_discovery.hpp"
 
 namespace {
@@ -31,6 +32,10 @@ int usage() {
   std::cerr << kTag
             << "   baseline --compare diffs deterministicos por classe "
                "(--strict so falha em IDENTITY/STATIC)\n";
+  std::cerr << kTag << " uso: ga106-lab lab-status\n";
+  std::cerr << kTag
+            << "   lab-status visao read-only de ownership (driver, boot "
+               "VGA, fb, DRM, conectores, iGPU, veredito)\n";
   return 2;
 }
 
@@ -133,6 +138,14 @@ int run_info() {
 
 int main(int argc, char** argv) {
   if (argc == 2 && std::string(argv[1]) == "info") return run_info();
+  if (argc == 2 && std::string(argv[1]) == "lab-status") {
+    return ga106lab::run_lab_status({});
+  }
+  if (argc > 2 && std::string(argv[1]) == "lab-status") {
+    std::vector<std::string> rest;
+    for (int i = 2; i < argc; ++i) rest.emplace_back(argv[i]);
+    return ga106lab::run_lab_status(rest);
+  }
   if (argc >= 2 && std::string(argv[1]) == "baseline") {
     std::vector<std::string> rest;
     for (int i = 2; i < argc; ++i) rest.emplace_back(argv[i]);

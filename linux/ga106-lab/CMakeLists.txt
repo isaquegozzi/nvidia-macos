@@ -10,6 +10,7 @@ add_executable(ga106-lab
   src/baseline.cpp
   src/json_flat.cpp
   src/baseline_compare.cpp
+  src/lab_status.cpp
 )
 
 target_link_libraries(ga106-lab PRIVATE nvidia_common)

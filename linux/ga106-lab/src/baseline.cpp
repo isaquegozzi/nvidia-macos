@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "drm_discovery.hpp"
+#include "lab_status.hpp"
 #include "pci_discovery.hpp"
 
 namespace ga106lab {
@@ -643,6 +644,8 @@ struct Snapshot {
   std::vector<std::string> logs;
   std::string compute_apps;
   std::vector<std::string> holders;
+  // Prontidao do lab (reusa a coleta read-only do lab-status).
+  LabReadiness readiness;
 };
 
 void describe_bars(const ObservedGpu* gpu, Snapshot* snap) {
@@ -792,6 +795,7 @@ Snapshot collect_snapshot() {
   s.logs = filtered_log_view();
   s.compute_apps = compute_apps_view();
   s.holders = drm_holder_view(s.nodes);
+  s.readiness = lab_readiness_from(collect_lab_status());
   return s;
 }
 
@@ -889,6 +893,22 @@ std::string render_txt(const Snapshot& s) {
     os << "    unknown (nenhum holder visivel)\n";
   }
   for (const auto& h : s.holders) os << "    " << h << "\n";
+  os << "LabReadiness (read-only, vide `ga106-lab lab-status`):\n";
+  os << "  alternative_gpu_present: "
+     << (s.readiness.alt_present ? "true" : "false") << "\n";
+  os << "  desktop_gpu: "
+     << (s.readiness.has_desktop_gpu ? s.readiness.desktop_gpu : "unknown")
+     << "\n";
+  os << "  target_gpu_used_by_desktop: "
+     << (!s.readiness.used_known
+             ? "unknown"
+             : (s.readiness.target_used ? "true" : "false"))
+     << "\n";
+  os << "  target_gpu_active_connectors: "
+     << (s.readiness.has_active ? std::to_string(s.readiness.active_count)
+                                : "unknown")
+     << "\n";
+  os << "  status: " << s.readiness.status << "\n";
   os << "Provenance:\n";
   os << "  snapshot reproduzivel: reexecute `ga106-lab baseline [--out-dir "
         "DIR] [--stdout]` no mesmo host para comparar\n";
@@ -1011,6 +1031,29 @@ std::string render_json(const Snapshot& s) {
     os << "\"" << json_escape(s.holders[i]) << "\"";
   }
   os << "]\n";
+  os << "  },\n";
+  os << "  \"lab_readiness\": {\n";
+  os << "    \"alternative_gpu_present\": "
+     << (s.readiness.alt_present ? "true" : "false") << ",\n";
+  if (s.readiness.has_desktop_gpu) {
+    os << "    \"desktop_gpu\": \"" << json_escape(s.readiness.desktop_gpu)
+       << "\",\n";
+  } else {
+    os << "    \"desktop_gpu\": null,\n";
+  }
+  if (s.readiness.used_known) {
+    os << "    \"target_gpu_used_by_desktop\": "
+       << (s.readiness.target_used ? "true" : "false") << ",\n";
+  } else {
+    os << "    \"target_gpu_used_by_desktop\": null,\n";
+  }
+  if (s.readiness.has_active) {
+    os << "    \"target_gpu_active_connectors\": " << s.readiness.active_count
+       << ",\n";
+  } else {
+    os << "    \"target_gpu_active_connectors\": null,\n";
+  }
+  os << "    \"status\": \"" << json_escape(s.readiness.status) << "\"\n";
   os << "  }\n";
   os << "}\n";
   return os.str();
