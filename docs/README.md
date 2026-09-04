@@ -12,6 +12,7 @@ Fase 0 é 80% documentação. Código sem documento correspondente é suspeito.
 | `nvidia-open-gpu-doc/` | O que a documentação pública de HW garante para Ampere/GA106?   | mapeado       |
 | `research/`         | Decisões, becos sem saída, próximos passos                        | placeholder   |
 | `lab/`              | A bancada está pronta para isolar a RTX sem perder o display?      | mapeado       |
+| `macos/`            | Qual entrypoint de driver (PCIDriverKit vs KEXT) para o lab PCI?   | mapeado       |
 
 Regra: toda observação de hardware vira nota datada aqui **antes** de virar
 código em `linux/`. Ver `SAFETY.md` antes de propor qualquer escrita.
@@ -32,3 +33,7 @@ Ver `SAFETY_MMIO_PREREQUISITES.md` (gate: enquanto `BLOCKED`, Fase 0 segue somen
 - `lab/pcie-topology.md` — topologia PCIe read-only (2026-09-04): GPU max Gen4 x16, root-port `00:01.1` max Gen3 x16, current Gen1 x16 (era Gen2 no baseline) por ASPM; tabela canônica GT/s→Gen (`5.0`=Gen2).
 - `lab/nvidia-free-boot-test.md` — plano REVERSÍVEL DE UM ÚNICO BOOT (NÃO APLICADO, 2026-09-04): bootloader Limine 12.7.0, initramfs mkinitcpio com `MODULES+=(nvidia ...)` via chwd → exige `module_blacklist=` (`modprobe.blacklist` só não basta; `rd.driver.blacklist` é só-dracut); edição `E` no menu, sem persistir.
 - `lab/ssh-readiness.md` — prontidão SSH (somente leitura, 2026-09-04, nada habilitado): `sshd` instalado mas `inactive`+`disabled`, sem `:22`, sem `authorized_keys`, `ufw` ativo com regras UNKNOWN, alvo LAN `192.168.5.12`; gaps + comandos locais/remotos exatos.
+- `macos/driver-architecture-gate.md` — comparativo PCIDriverKit (A) vs IOKit KEXT (B) com confiança por afirmação (2026-09-04): IOPCIDevice, matching, config/BAR, SystemExtensions, signing, entitlements, restrição `built-in` CONFIRMED (código + DTS) com aplicabilidade à RTX UNCERTAIN, produção `0x10DE` como bloqueador prático, Tahoe/KEXT/Lilu-WEG, futuro gráfico.
+- `macos/ADR-0001-driver-entrypoint.md` — decisão `IOKit KEXT first` (PCIDriverKit diferido), baseada em carregabilidade real, entitlements, PCI interno, MMIO, futuro, debugging, Tahoe e objetivo gráfico.
+- `ga106/first-mmio-read.md` — candidatura do primeiro MMIO read (doc only, sem execução): veredito reuse `common/` (limpo, só comentários sysfs), `NV_PMC_BOOT_0` confirmado (`0x00000000`, 32-bit, `R--4R`, `0x176xxxxx`, rev `a1` ⇒ `0x176000A1` aprox.) com pins tag `610.57.04` (SHA `e4a5faa…`) + `open-gpu-doc@9fdf5c4…` + Nouveau `46741e4f`/`v6.6`/`986c24e0`; riscos + gates (boot sem NVIDIA + SSH + desktop independente, `BLOCKED` 3/11).
+- `macos/common-reuse.md` — reuse `common/` no macOS (DriverKit C++ vs IOKit C++ vs helper userspace): `NvidiaDeviceInfo`/`NvidiaPciDevice`/`NvidiaPciBar` reutilizáveis sem deps Linux (só comentários sysfs em `pci_device.hpp:3`/`pci_bar.hpp:11`); ressalva tabela `0x2487`/`0x24AA` vs `device-ids.md`.

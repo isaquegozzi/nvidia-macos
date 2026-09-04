@@ -28,3 +28,13 @@ Apenas quando todas as condições forem verdadeiras:
 Até lá: **não criar `.kext`, DriverKit `.dext`, IOKit, PCIDriverKit ou qualquer
 código Mach-O aqui**. Propostas de macOS entram primeiro como documento em
 `docs/research/`.
+
+## Pesquisa documental macOS (2026-09-04)
+
+Gate comparativo + ADR de entrypoint (somente docs, sem código):
+
+- `../docs/macos/driver-architecture-gate.md` — PCIDriverKit (A) vs IOKit
+  KEXT (B) com confiança por afirmação; restrição `built-in` CONFIRMED com
+  aplicabilidade à RTX UNCERTAIN; produção `0x10DE` como bloqueador prático.
+- `../docs/macos/ADR-0001-driver-entrypoint.md` — decisão: **IOKit KEXT first**
+  (PCIDriverKit diferido) para o lab PCI read-only no Hackintosh Tahoe.
