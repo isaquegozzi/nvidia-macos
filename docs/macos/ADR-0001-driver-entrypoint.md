@@ -1,9 +1,8 @@
 # ADR-0001: Entrypoint de driver macOS para laboratório PCI da GA106
 
-> Status: **ACCEPTED (Fase 0, documental)** — 2026-09-04.
-> Escopo: somente escolha de entrypoint para lab PCI read-only da RTX 3060
-> `10de:2504` em Hackintosh Tahoe Intel. Nenhum código de driver autorizado
-> por este ADR. Ver gate completo em `driver-architecture-gate.md`.
+> Status: **SUPERSEDED by ADR-0002 — UNDER_REVIEW (Fase TG0, documental)** — 2026-09-04.
+> Sucedido por: `docs/macos/ADR-0002-tinygpu-reuse.md` (estratégia TinyGPU-compatible transport).
+> Escopo histórico preservado abaixo; nenhuma conclusão nova neste arquivo.
 
 ## Contexto
 
