@@ -116,3 +116,15 @@
    datada aqui antes de qualquer experimento com a RTX como target.
 3. Mantido gate `SAFETY_MMIO_PREREQUISITES.md`: sem MMIO enquanto iGPU/display não
    estiverem em `dual-gpu-setup.md` estado desejado.
+
+## 6. Adendo 2026-09-04 — iGPU habilitada no UEFI (verificação pós-mudança)
+
+Usuário habilitou a iGPU manualmente no setup. Reverificação somente leitura:
+
+- `08:00.0 VGA [1002:1638] rev c9` PRESENTE (subsys Gigabyte 1458:d000), driver `amdgpu`, IOMMU 13, boot_vga=0
+- DRM: `card0 (226,0)` + `renderD129 (226,129)`, uevent DRIVER=amdgpu PCI_ID=1002:1638
+- BARs AMD: BAR0 256M pref @7c10000000, BAR2 2M pref, IO d000/256, BAR5 MMIO 512K @fc500000
+- Kernel: `RENOIR 0x1002:0x1638`, VBIOS `13-CEZANNE-019`, VRAM 32M + GTT 7909M, fb1=amdgpudrmfb
+- Conector `card0-HDMI-A-2: connected/enabled/On` (1920x1080+) — monitor ativo na iGPU
+- Desktop permanece na NVIDIA (ver `lab-status`: gnome-shell renderD128, glxinfo NVIDIA) → `PARTIALLY_READY`
+- Verdict anterior (`LIKELY` desabilitada) **superado por evidência**: iGPU funcional — **CONFIRMED presente e operacional**.

@@ -493,9 +493,12 @@ LabStatus collect_lab_status() {
     }
     for (const auto& h : scan_target_holders(alt_nodes)) {
       std::istringstream words(h);
-      std::string pid, comm;
-      words >> pid >> comm;
-      if (is_desktop_comm(comm)) compositor_on_alt = true;
+      std::string pid, comm, link;
+      words >> pid >> comm >> link;
+      if (!is_desktop_comm(comm)) continue;
+      // Render nodes (renderD*) provam GL/EGL; opens em cardN sozinho sao
+      // tipicamente enumeracao KMS multi-GPU, nao sessao na iGPU.
+      if (starts_with(basename_of(link), "renderD")) compositor_on_alt = true;
     }
   }
   if (compositor_on_target) {
@@ -565,11 +568,24 @@ LabStatus collect_lab_status() {
     }
 
     // READY exige TODAS; presenca da iGPU sozinha nunca basta.
+    // PARTIALLY_READY: iGPU funcional (driver+DRM, idealmente com display)
+    // mas desktop ainda no alvo.
+    const bool alt_functional =
+        st.alt.present && !st.alt.driver.empty() &&
+        st.alt.driver != "unknown" && !st.alt.drm_nodes.empty();
     if (st.alt.present && st.session_on_alt && target_active == 0 &&
         !st.target_used_by_desktop && !compositor_on_target &&
         compute_free) {
       st.verdict = "READY_FOR_NEXT_PHASE";
       rs.push_back("veredito: todas as condicoes de liberacao valem");
+    } else if (alt_functional) {
+      st.verdict = "PARTIALLY_READY";
+      rs.push_back("veredito PARTIALLY_READY: iGPU alternativa funcional "
+                   "(driver=" +
+                   st.alt.driver + ", DRM nodes=" +
+                   std::to_string(st.alt.drm_nodes.size()) + ", ativos=" +
+                   std::to_string(alt_active) +
+                   ") mas desktop ainda depende do alvo (ver itens acima)");
     } else {
       st.verdict = "BLOCKED";
       if (!st.alt.present) {
@@ -686,6 +702,7 @@ std::string render_lab_status(const LabStatus& st) {
   for (const auto& r : st.verdict_reasons) os << "  - " << r << "\n";
   os << "  (READY_FOR_NEXT_PHASE exige iGPU presente E sessao na iGPU E "
         "RTX sem conector ativo usado E sem clientes desktop no alvo; "
+        "PARTIALLY_READY = iGPU funcional mas desktop ainda no alvo; "
         "outra GPU sozinha nunca implica READY)\n";
   return os.str();
 }
