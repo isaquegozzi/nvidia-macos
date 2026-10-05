@@ -44,7 +44,26 @@ enumeração — documentado como multi-GPU Mutter, não-bloqueante p/ desktop).
 - **TGM0 (correção)**: `IOPCITunnelCompatible` = suporte declarado, NÃO prova Thunderbolt-only (túnel real = `IOPCITunnelled`); `fix(tinygpu)` commit `77fd0b5`; personality re-extraída; **risco AMD = RISK (não instalar DEXT)**; reuso direto = UNLIKELY; `tinygpu-match-check.py` (`--self-test` PASS); runbook ioreg PENDENTE (era impossível no Linux).
 - **IDs**: `common/include/nvidia/chip.hpp` (`NvidiaChip`, `chip_from_device_id`), `fix(common)` `5911c75`, teste `chip_id` no ctest. `0x2487`=GA104!
 
-## 5. MISSÃO IMEDIATA (executar AGORA no macOS Tahoe)
+## 6. AVISO: NVRAM contém `-wegnogpu` (WhateverGreen)
+
+O Hackintosh boota com `-wegnogpu` (sem ele, não boota com a RTX presente).
+Efeitos esperados e o que verificar (somente leitura):
+
+- **Inspeção ioreg**: provavelmente ajuda (RTX deve aparecer como `IOPCIDevice`
+  sem driver gráfico anexado = provider limpo). `built-in`/`IOPCITunnelled`
+  continuam legíveis.
+- **Risco real**: `-wegnogpu` desabilita dGPUs e pode acionar `_OFF` (power-gate
+  via ACPI) ou injetar propriedades de disable. Se a RTX estiver **desligada**,
+  nenhum experimento futuro (TinyGPU dext, NVDev, MMIO) funciona até remover a
+  flag — mas remover a flag recria o problema de boot original. **Tensão central
+  a resolver.**
+- No `ioreg` da RTX, registrar também: `IOPowerManagement` (current power
+  state), `_STA`, propriedades injetadas pela WEG (`disable-gpu` e similares),
+  `log show --last boot | grep -i weg` (mensagens sobre disable/_OFF).
+- Classificar a RTX no macOS: `BARE` (presente, sem driver, ligada) vs
+  `POWER_GATED` (desligada via ACPI)   vs `HIDDEN` (não enumerada).
+
+## 7. MISSÃO IMEDIATA (executar AGORA no macOS Tahoe)
 
 Pré-condição: desktop Tahoe rodando na AMD (verifique: About This Mac / display ativo na saída da placa-mãe; aborte experimentos se o desktop depender da RTX).
 
