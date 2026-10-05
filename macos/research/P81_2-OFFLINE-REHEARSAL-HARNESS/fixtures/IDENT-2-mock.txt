@@ -1,0 +1,4 @@
+MOCK IDENT-2 pci identity // synthetic rehearsal fixture
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO
+class: MOCK-CLASS-00 // diff status: allowlisted
+mac: MOCK-MAC-00-00-00 (synthetic, no real MAC)

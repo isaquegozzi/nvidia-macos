@@ -1,0 +1,4 @@
+MOCK IDENT-4 clock // synthetic rehearsal fixture, method G-M0244-01-R1
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO
+method: G-M0244-01-R1 (parsed only, host clock never consulted as evidence)
+skew_s: 0 // jumps: 0 // bound skew<=5s, jumps==0

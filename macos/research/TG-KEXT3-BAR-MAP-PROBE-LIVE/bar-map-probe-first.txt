@@ -1,0 +1,3 @@
+BAR semantic=0 resourceIndex=0
+BAR physBase=0x00000000fb000000 resourceLength=0x0000000001000000 mappedLength=0x0000000001000000
+BAR mapOptions=0x00001101 mapState=1 validMask=0x0000006f status=4

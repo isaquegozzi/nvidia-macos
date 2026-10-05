@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S19 // got=BLOCKED expected=BLOCKED // match=True
+reasons: blocked:partial-verdict
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

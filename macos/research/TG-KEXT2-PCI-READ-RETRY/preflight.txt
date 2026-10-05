@@ -1,0 +1,8 @@
+PRECHECK seg  7 set 2026 19:41:32 -03
+KEXT2_FIX_1_2_1_LOADED=YES (1.2.1 idx88)
+GA106LabState=START_SUCCESS
+provider registry=10de:2504 / 01:00.0 rev a1 class 030000
+AMD=HEALTHY (accelerator active)
+WindowServer=HEALTHY (195) displaypolicyd=HEALTHY (143)
+BIN= SHA=550d916b959667bca473b454f219985c67d749add97dba4c6c288b761fb63e22 (fix-src)
+   88    0 0xffffff80046ec000 0xc000     0xc000     org.nvidia-macos.GA106Lab (1.2.1) 1796CBF2-9CD0-3F61-9990-370D125F971B <19 6 3>

@@ -1,0 +1,5 @@
+PANIC=NO (no new panic after 01:40:46; newest DiagnosticReports 01:40:16 pre-boot)
+SPONTANEOUS_REBOOT=NO (uptime single boot)
+GPU_RESTART=NO
+WINDOWSERVER_CRASH=NO (WindowServer pid 195 running)
+DISPLAYPOLICYD_LOOP=NO (pid 143 running)

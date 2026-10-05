@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>GA106Lab</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.nvidia-macos.GA106Lab</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>GA106Lab</string>
+	<key>CFBundlePackageType</key>
+	<string>KEXT</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.5.3</string>
+	<key>CFBundleVersion</key>
+	<string>1.5.3</string>
+	<key>IOKitPersonalities</key>
+	<dict>
+		<key>GA106Lab</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>org.nvidia-macos.GA106Lab</string>
+			<key>IOClass</key>
+			<string>GA106Lab</string>
+			<key>IOMatchCategory</key>
+			<string>GA106Lab</string>
+			<key>IOProbeScore</key>
+			<integer>0</integer>
+			<key>IOProviderClass</key>
+			<string>IOPCIDevice</string>
+			<key>IOPCIPrimaryMatch</key>
+			<string>0x250410de</string>
+		</dict>
+	</dict>
+	<key>OSBundleLibraries</key>
+	<dict>
+		<key>com.apple.iokit.IOPCIFamily</key>
+		<string>1.0.0b1</string>
+		<key>com.apple.kpi.iokit</key>
+		<string>10.0.0</string>
+		<key>com.apple.kpi.libkern</key>
+		<string>10.0.0</string>
+	</dict>
+</dict>
+</plist>

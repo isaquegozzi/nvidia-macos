@@ -1,0 +1,6 @@
+bae9de7a61d2ef07438f543ce468e2649a7decf000afdaf0ef5025dd4994aeab  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/Info.plist
+e64846d5bb7773d7894751f1ed407c7f2121a4c941fafdd8c0e1f7b18a043848  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/GA106Lab.hpp
+a66560f174e10e02e2822dcd8230b3551db4ac2e9496c053a46713b189f423c1  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/GA106Lab.cpp
+3155f80ef0252b34e1a15f8e3edacf2122476f48f223b4fa8efb8cee0cb1fe82  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/build.sh
+930c4dca7d9905690cd3a01a4e867454e81efbb9033631772e27528259ceb6c9  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/build/obj/GA106Lab.kext/Contents/MacOS/GA106Lab
+bae9de7a61d2ef07438f543ce468e2649a7decf000afdaf0ef5025dd4994aeab  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-rev1-src/build/obj/GA106Lab.kext/Contents/Info.plist

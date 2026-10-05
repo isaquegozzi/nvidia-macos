@@ -1,0 +1,12 @@
+AFTER seg  7 set 2026 20:32:28 -03
+AMD accel:
+    | |   |   | | +-o AMDRadeonX5000_AMDVega10GraphicsAccelerator  <class AMDRadeonX5000_AMDVega10GraphicsAccelerator, id 0x1000004ab, registered, matched, active, busy 0 (29 ms), retain 95>
+WS pid=195 DP pid=143
+_windowserver      195  13,2  0,7 36916504 115288   ??  Rs    7:34     5:40.41 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33753040   5540   ??  Ss    7:34     0:00.04 /usr/libexec/displaypolicyd -k 1
+AMD_GRAPHICS_AFTER=HEALTHY
+WINDOWSERVER_AFTER=HEALTHY
+DISPLAYPOLICYD_AFTER=HEALTHY
+      Device ID: 0x2504
+      Device ID: 0x1638
+      Metal Support: Metal 3

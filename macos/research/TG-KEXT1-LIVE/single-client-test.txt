@@ -1,0 +1,9 @@
+== hold A ==
+holdga106: holding 25s
+== B while held ==
+ga106ctl: IOServiceOpen failed (-536870203)
+exit=1
+== C after close ==
+protocol: 1
+driver: 0x00010100
+exit=0

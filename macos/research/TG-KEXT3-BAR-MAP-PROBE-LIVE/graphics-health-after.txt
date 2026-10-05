@@ -1,0 +1,5 @@
+AFTER seg  7 set 2026 20:57:04 -03
+195 WindowServer
+143 displaypolicyd
+    | |   |   | | +-o AMDRadeonX5000_AMDVega10GraphicsAccelerator  <class AMDRadeonX5000_AMDVega10GraphicsAccelerator, id 0x1000004b0, registered, matched, active, busy 0 (8 ms), retain 82>
+HEALTHY x3

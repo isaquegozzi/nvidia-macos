@@ -1,0 +1,52 @@
+BOOT_UUID=2844E679-719E-4D80-A8D6-71C14C774CD5
+BOOT_TIME={ sec = 1788820470, usec = 988936 } Mon Sep  7 19:34:30 2026
+
+== DiagnosticReports newest (old vs current boot 19:34:30) ==
+total 24536
+-rw-rw----@ 1 root  _analyticsusers  932257  7 set 19:33 shutdown_stall_2026-09-07-193356_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers   26817  7 set 19:13 com.apple.WebKit.Networking_2026-09-07-191357_Mac-Pro-de-Isaque.diag
+-rw-rw----@ 1 root  _analyticsusers  910600  7 set 18:16 shutdown_stall_2026-09-07-181646_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  887155  7 set 17:42 shutdown_stall_2026-09-07-174255_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  895131  7 set 17:34 shutdown_stall_2026-09-07-173422_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers   26228  7 set 16:49 bsdtar_2026-09-07-164913_Mac-Pro-de-Isaque.diag
+-rw-rw----@ 1 root  _analyticsusers  907917  7 set 16:35 shutdown_stall_2026-09-07-003506_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  898434  7 set 16:35 shutdown_stall_2026-09-06-164442_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  891439  7 set 16:35 shutdown_stall_2026-09-06-172830_Mac-Pro-de-Isaque.shutdownStall
+
+== panic files ==
+-rw-rw-rw-@ 1 root  _analyticsusers  3541  6 set 00:38 /Library/Logs/DiagnosticReports/Kernel-2026-09-06-003847.panic
+
+== DumpPanic last boot ==
+Timestamp                       Thread     Type        Activity             PID    TTL  
+2026-09-07 19:34:34.862368-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] DumpPanic launched after boot to check for device panic data
+2026-09-07 19:34:34.894105-0300 0x31a      Default     0x0                  109    0    DumpPanic: (libxpc.dylib) [com.apple.xpc:connection] [0x7fee8df04800] activating connection: mach=true listener=false peer=false name=com.apple.remoted
+2026-09-07 19:34:35.150747-0300 0x31a      Default     0x0                  109    0    DumpPanic: (RemoteServiceDiscovery) [com.apple.RemoteServiceDiscovery:RemoteServiceDiscovery] remote_device_copy_unique_of_type: device not found
+2026-09-07 19:34:35.151198-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] detected MSSW (newer) mac
+2026-09-07 19:34:35.151336-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] found previous shutdown cause 5
+2026-09-07 19:34:35.151352-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.osanalytics.preoslog:default] Flush preoslog
+2026-09-07 19:34:35.151479-0300 0x31a      Error       0x0                  109    0    DumpPanic: [com.apple.osanalytics.preoslog:default] preoslog buffer size is 0
+2026-09-07 19:34:35.151586-0300 0x31a      Default     0x0                  109    0    DumpPanic: (RemoteServiceDiscovery) [com.apple.RemoteServiceDiscovery:RemoteServiceDiscovery] remote_device_copy_unique_of_type: device not found
+2026-09-07 19:34:35.151729-0300 0x31a      Info        0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] no panic or MCA data found in NVRAM
+2026-09-07 19:34:35.151735-0300 0x31a      Info        0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] processNVRAMPanicData returned (null)
+2026-09-07 19:34:35.217955-0300 0x31a      Info        0x0                  109    0    DumpPanic: (CarbonCore) [com.apple.CarbonCore:coreservicesdaemon] SCSession():SCSession( id=100, this=0x0x7fee8ea08250 option=65538) created, forUID=0 mach_port_t=0x1603.
+2026-09-07 19:34:35.217960-0300 0x31a      Info        0x0                  109    0    DumpPanic: (CarbonCore) [com.apple.CarbonCore:coreservicesdaemon] SCSession():SCSession( id=101, this=0x0x7fee8ea08370 option=65538) created, forUID=0 mach_port_t=0x120b.
+2026-09-07 19:34:35.217960-0300 0x31a      Info        0x0                  109    0    DumpPanic: (CarbonCore) [com.apple.CarbonCore:coreservicesdaemon] connectToCoreServicesD():Instantiating server (coreservicesd based) SCSession, port=0x1603 serverOptions=0x10002.
+2026-09-07 19:34:35.228235-0300 0x31a      Info        0x0                  109    0    DumpPanic: (CarbonCore) [com.apple.CarbonCore:FileIDMap] FIDCopyFileIDMapForVolume FIDCopyFileIDMapForVolume: adding FileIDMap for vRefNum (-100)
+2026-09-07 19:34:35.373708-0300 0x31a      Activity    0x300                109    0    DumpPanic: (libsystem_info.dylib) Retrieve Group by ID
+2026-09-07 19:34:35.444384-0300 0x31a      Error       0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] Skip handling kernel corefile which suggests 0 files present
+2026-09-07 19:34:35.444454-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] No launchd core found at /cores/core.1
+2026-09-07 19:34:35.444462-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] No launchd core found at /cores/core.1
+2026-09-07 19:34:35.444464-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] DumpPanic processed 0 files
+
+== shutdown cause ==
+Timestamp                       Thread     Type        Activity             PID    TTL  
+2026-09-07 19:34:32.019848-0300 0x32c      Default     0x0                  0      0    kernel: (AppleSMC) Previous shutdown cause: 5
+2026-09-07 19:34:35.151336-0300 0x31a      Default     0x0                  109    0    DumpPanic: [com.apple.DumpPanic:panicprocessing] found previous shutdown cause 5
+2026-09-07 19:39:26.123396-0300 0x2ba2     Default     0x0                  1063   0    log: [com.apple.log:] log run noninteractively, parent: 1052 (bash), args: 'log' 'show' '--last' 'boot' '--predicate' 'process == "kernel" && eventMessage CONTAINS "shutdown cause"'
+2026-09-07 19:40:03.776690-0300 0x2fc8     Default     0x0                  1196   0    log: [com.apple.log:] log run noninteractively, parent: 1177 (bash), args: 'log' 'show' '--last' 'boot' '--predicate' 'eventMessage CONTAINS "shutdown cause"'
+
+PANIC=NO (only stale 2026-09-06-003847)
+SPONTANEOUS_REBOOT=NO
+GPU_RESTART=NO (last 2026-09-05)
+WINDOWSERVER_CRASH=NO
+DISPLAYPOLICYD_LOOP=NO

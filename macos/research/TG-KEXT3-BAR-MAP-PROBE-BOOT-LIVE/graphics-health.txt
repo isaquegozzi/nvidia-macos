@@ -1,0 +1,9 @@
+AMD:
+    | |   |   | | +-o AMDRadeonX5000_AMDVega10GraphicsAccelerator  <class AMDRadeonX5000_AMDVega10GraphicsAccelerator, id 0x1000004b0, registered, matched, active, busy 0 (8 ms), retain 82>
+IONDRV count: 0
+GA106 count: 1
+_windowserver      195   6,0  0,6 36592852 101048   ??  Ss    8:51     0:21.94 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33777616   5576   ??  Ss    8:51     0:00.04 /usr/libexec/displaypolicyd -k 1
+      Device ID: 0x2504
+      Device ID: 0x1638
+      Metal Support: Metal 3

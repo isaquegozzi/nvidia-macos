@@ -1,0 +1,3 @@
+_windowserver      195   6,8  0,6 36631476 106164   ??  Ss    1:40     0:42.60 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33761232   5500   ??  Ss    1:40     0:00.04 /usr/libexec/displaypolicyd -k 1
+   87    0 0xffffff80046ec000 0xd000     0xd000     org.nvidia-macos.GA106Lab (1.4.0) 886E8D46-C2E8-38ED-A277-57E063AC46D9 <19 6 3>

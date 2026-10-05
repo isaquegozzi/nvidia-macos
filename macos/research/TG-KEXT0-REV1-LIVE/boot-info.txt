@@ -1,0 +1,5 @@
+BOOT_UUID=A38682C7-4523-4A8F-887B-0D0B12F5FF12
+BOOT_TIME=2026-09-07 00:24:48 -0300
+ 0:30  up 5 mins, 3 users, load averages: 2,24 1,94 0,97
+boot-args	-v debug=0x100 keepsyms=1 -amfipassbeta
+e4f42fd0ae223123e71bc2f647c954be6605c2af362c6652b687ad0abb7745c0  /Volumes/MACOS PENDR/EFI/OC/config.plist

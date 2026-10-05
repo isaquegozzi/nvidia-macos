@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S04 // got=FAIL expected=FAIL // match=True
+reasons: fail:hash-mismatch:IDENT-1
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

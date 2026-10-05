@@ -1,0 +1,15 @@
+# Forbidden host-command catalog // documentation + runtime fixture.
+# The harness never executes these; S17 loads one entry to rehearse ABORT.
+ioreg
+kextstat
+kmutil
+kextcache
+nvram
+diskutil
+log show
+system_profiler
+sntp
+mount
+reboot
+shutdown
+sudo

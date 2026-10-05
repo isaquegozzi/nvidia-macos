@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S11 // got=FAIL-3 expected=FAIL-3 // match=True
+reasons: fail-3:kext-unexpected-line
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

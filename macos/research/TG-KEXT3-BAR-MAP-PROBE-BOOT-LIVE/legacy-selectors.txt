@@ -1,0 +1,17 @@
+$ version
+protocol: 1
+driver: 0x00010300
+exit=0
+$ identity
+vendor: 10de
+device: 2504
+providerEntryID: 4294967865
+state: 1
+exit=0
+$ status
+state: START_SUCCESS
+providerConfirmed: yes
+revision: 0x00010300
+exit=0
+pci = NOT_RUN
+bar-map-probe = NOT_RUN

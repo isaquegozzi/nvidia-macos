@@ -1,0 +1,3 @@
+2026-09-07 17:43:29.585 Df kernel[0:3c4] (IOPCIFamily) [PCIe:0 3585276925 ns] [childPublished()] child GA106Lab(0x100000277) published
+2026-09-07 17:43:34.412 Df kernelmanagerd[122:42d] Received kext load notification: org.nvidia-macos.GA106Lab
+2026-09-07 17:43:34.412 E  kernelmanager_helper[337:824] Could not process load notification in helper: Could not find: Did not find identifier (org.nvidia-maco

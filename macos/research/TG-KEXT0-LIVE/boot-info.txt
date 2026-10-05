@@ -1,0 +1,5 @@
+BOOT_UUID=06531E7E-0C2F-48FE-9336-4C65743914DF
+BOOT_TIME=2026-09-06 16:45:13 -0300
+kern.boottime: { sec = 1788723913, usec = 197140 } Sun Sep  6 16:45:13 2026
+boot-args	-v debug=0x100 keepsyms=1 -amfipassbeta
+6c410caa80d65246cc0a321f7ff9b400878d415e2a72ba04e3a3cea477aac28c  /Volumes/MACOS PENDR/EFI/OC/config.plist

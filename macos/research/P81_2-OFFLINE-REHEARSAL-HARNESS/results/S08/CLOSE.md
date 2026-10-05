@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S08 // got=ABORT expected=ABORT // match=True
+reasons: abort:no-video-simulated
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

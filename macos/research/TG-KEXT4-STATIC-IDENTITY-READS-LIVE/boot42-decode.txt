@@ -1,0 +1,5 @@
+raw = 0x176a1000
+chipId = (raw & 0x3FF00000) >> 20 = 0x176 (10-bit; old 9-bit mask also 0x176 here — fix proven offline by 0x376 counterexample)
+BOOT42_RAW_NOT_ABSENT = YES
+BOOT42_10BIT_DECODE_CORRECT = YES
+CHIP_ID_MATCH_GA106 = YES

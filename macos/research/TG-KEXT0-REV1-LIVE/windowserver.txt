@@ -1,0 +1,115 @@
+2026-09-07 00:24:53.097 Df launchd[1:239] [system/com.apple.loginwindow.3DC812D0-9347-4ED8-BABF-1BA40E9FE7BA [201]:] service state: running
+2026-09-07 00:24:53.637 Df loginwindow[201:3c2] [com.apple.runningboard:connection] Initializing connection
+2026-09-07 00:24:53.637 Df loginwindow[201:3c2] [com.apple.runningboard:process] Removing all cached process handles
+2026-09-07 00:24:53.637 Df loginwindow[201:4a9] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-09-07 00:24:53.637 Df loginwindow[201:4a9] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-09-07 00:24:53.637 Df loginwindow[201:4a9] [com.apple.xpc:connection] [0x7fb437204540] activating connection: mach=true listener=false peer=false
+2026-09-07 00:24:53.930 Df launchd[1:23b] [system/com.apple.loginwindow.3DC812D0-9347-4ED8-BABF-1BA40E9FE7BA [201]:] job state = running
+2026-09-07 00:24:53.930 Df runningboardd[207:4fd] [com.apple.runningboard:general] [osservice<com.apple.loginwindow>:201:201] reported to RB as runnin
+2026-09-07 00:24:53.936 Df loginwindow[201:4a9] [com.apple.runningboard:connection] Handshake succeeded
+2026-09-07 00:24:53.936 Df loginwindow[201:4a9] [com.apple.runningboard:connection] Identity resolved as osservice<com.apple.loginwindow>:201
+2026-09-07 00:24:55.060 Df launchd[1:23b] [loginwindow/201/com.apple.UserEventAgent-LoginWindow [274]:] service state: running
+2026-09-07 00:24:55.070 Df launchd[1:23a] [loginwindow/201/com.apple.universalaccessd [275]:] service state: running
+2026-09-07 00:24:55.076 Df launchd[1:2c5] [loginwindow/201/com.apple.imklaunchagent [272]:] service state: running
+2026-09-07 00:24:55.141 Df launchd[1:23a] [loginwindow/201/com.apple.pluginkit.pkd [288]:] service state: running
+2026-09-07 00:24:57.361 Df WindowServer[195:8a8] [com.apple.xpc:connection] [0x7fd56cd04a80] Re-initialization successful; calling out to event handle
+2026-09-07 00:25:29.954 Df WindowServer[195:8b7] [com.apple.xpc:connection] [0x7fd56cd04f10] Re-initialization successful; calling out to event handle
+2026-09-07 00:25:58.662 Df WindowServer[195:387] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 00:25:58.667 Df launchd[1:23b] [loginwindow/201/com.apple.preference.displays.MirrorDisplays [427]:] service state: running
+2026-09-07 00:25:58.706 Df launchd[1:ad9] [loginwindow/201/com.apple.universalaccessd [275]:] job state = running
+2026-09-07 00:25:58.714 Df launchd[1:ad9] [loginwindow/201/com.apple.preference.displays.MirrorDisplays [427]:] job state = running
+2026-09-07 00:25:58.923 Df loginwindow[201:b8c] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManagement] | multiUserController is
+2026-09-07 00:25:58.977 Df launchd[1:ad9] [loginwindow/201/com.apple.ViewBridgeAuxiliary [436]:] service state: running
+2026-09-07 00:25:59.020 Df launchd[1:aef] [loginwindow/201/com.apple.ViewBridgeAuxiliary [436]:] job state = running
+2026-09-07 00:25:59.385 Df loginwindow[201:3c2] [com.apple.macbuddy:SAUserSetupState] 'Setup Assistant' is not running
+2026-09-07 00:25:59.399 Df loginwindow[201:c6f] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManagement] | multiUserController is
+2026-09-07 00:26:00.079 Df WindowServer[195:387] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 00:26:00.268 Df launchd[1:23b] [loginwindow/201/com.apple.preference.displays.MirrorDisplays [427]:] service state: not running
+2026-09-07 00:26:00.838 Df launchd[1:aef] [loginwindow/201/com.apple.CryptoTokenKit.ahp.agent [447]:] service state: running
+2026-09-07 00:26:00.872 Df launchd[1:ad9] [loginwindow/201/com.apple.ctkd [449]:] service state: running
+2026-09-07 00:26:00.981 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[ScreenSaverDaemon restartForUser:] | no screen saver runnin
+2026-09-07 00:26:01.755 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[LoginProgress closeAndReleaseAllWindowsWithAnimation:] |   
+2026-09-07 00:26:01.755 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[LoginProgress progressAnimationComplete] |      calling to 
+2026-09-07 00:26:01.755 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[LoginProgress abortProgressUIIfRunning] |      no progress 
+2026-09-07 00:26:02.030 Df WindowServer[195:c99] [com.apple.xpc:connection] [0x7fd56c806910] Re-initialization successful; calling out to event handle
+2026-09-07 00:26:02.967 Df launchd[1:ad9] [loginwindow/201:] failed lookup: name = com.apple.inputswitcher.running, flags = 0x1, requestor = SecurityA
+2026-09-07 00:26:06.726 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[Login1 isGuestAccount] | guestCheckRun == NO, running check
+2026-09-07 00:26:06.737 Df launchd[1:ad9] [loginwindow/201:] failed lookup: name = com.apple.inputswitcher.running, flags = 0x1, requestor = SecurityA
+2026-09-07 00:26:06.982 Df launchd[1:d91] [loginwindow/201/com.apple.ctkd [449]:] service state: not running
+2026-09-07 00:26:06.982 Df launchd[1:d91] [loginwindow/201/com.apple.ViewBridgeAuxiliary [436]:] service state: not running
+2026-09-07 00:26:06.983 Df launchd[1:d91] [loginwindow/201/com.apple.CryptoTokenKit.ahp.agent [447]:] service state: not running
+2026-09-07 00:26:06.983 Df launchd[1:d91] [loginwindow/201/com.apple.imklaunchagent [272]:] service state: not running
+2026-09-07 00:26:06.983 Df launchd[1:d91] [loginwindow/201/com.apple.pluginkit.pkd [288]:] service state: not running
+2026-09-07 00:26:06.987 Df launchd[1:d91] [loginwindow/201/com.apple.universalaccessd [275]:] service state: not running
+2026-09-07 00:26:07.032 Df loginwindow[201:c27] [com.apple.LocalAuthentication:Gestalt] runningInSystemContext = 1
+2026-09-07 00:26:07.035 Df loginwindow[201:c27] [com.apple.LocalAuthentication:Gestalt] runningInOsxRecovery = 0
+2026-09-07 00:26:07.044 Df loginwindow[201:3c2] [com.apple.loginwindow.logging:Standard] -[ScreenSaverDaemon restartForUser:] | no screen saver runnin
+2026-09-07 00:26:07.047 Df loginwindow[201:c27] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManagement] | multiUserController is
+2026-09-07 00:26:07.492 Df WindowServer[195:387] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 00:26:14.585 Df gamepolicyd[700:1699] [com.apple.runningboard:monitor] Received state update for 201 (osservice<com.apple.loginwindow>:201,
+2026-09-07 00:26:33.104 Df WindowServer[195:c98] [com.apple.xpc:connection] [0x7fd56c847800] Re-initialization successful; calling out to event handle
+2026-09-07 00:26:59.639 Df gamepolicyd[700:1699] [com.apple.runningboard:monitor] Received state update for 201 (osservice<com.apple.loginwindow>:201,
+2026-09-07 00:27:04.276 Df WindowServer[195:c94] [com.apple.xpc:connection] [0x7fd56c860500] Re-initialization successful; calling out to event handle
+2026-09-07 00:27:35.352 Df WindowServer[195:f5d] [com.apple.xpc:connection] [0x7fd56c936940] Re-initialization successful; calling out to event handle
+2026-09-07 00:28:06.824 Df WindowServer[195:c98] [com.apple.xpc:connection] [0x7fd56cc19c70] Re-initialization successful; calling out to event handle
+2026-09-07 00:28:37.943 Df WindowServer[195:f5d] [com.apple.xpc:connection] [0x7fd56c8b3800] Re-initialization successful; calling out to event handle
+2026-09-07 00:29:09.144 Df WindowServer[195:2500] [com.apple.xpc:connection] [0x7fd56b74a9d0] Re-initialization successful; calling out to event handl
+2026-09-07 00:29:40.217 Df WindowServer[195:2bc9] [com.apple.xpc:connection] [0x7fd56cd47760] Re-initialization successful; calling out to event handl
+2026-09-07 00:30:07.844 Df com.apple.WebKit.GPU[720:1df9] [com.apple.xpc:connection] [0x7f9034f53200] activating connection: mach=false listener=false
+2026-09-07 00:30:07.844 Df launchd[1:2e7f] [pid/720 [com.apple.WebKi]:] Service stub initialized for com.apple.MTLCompilerService
+2026-09-07 00:30:07.844 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService:] initialized endpoint after lookup
+2026-09-07 00:30:07.844 Df com.apple.WebKit.GPU[720:1df9] [com.apple.xpc:connection] [0x102d13860] activating connection: mach=false listener=false pe
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198:] internal event: WILL_SPAWN, co
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198:] service state: spawn scheduled
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198:] service state: spawning
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198:] launching: ipc (mach)
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] xpcproxy spawned with pi
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] internal event: SPAWNED,
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] service state: xpcproxy
+2026-09-07 00:30:07.845 Df launchd[1:2e7f] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] internal event: SOURCE_A
+2026-09-07 00:30:07.853 Df kernel[0:3028] (AppleMobileFileIntegrity) AMFI: [non-fatal] unable to accelerate context: com.apple.MTLCompilerService | 65
+2026-09-07 00:30:07.853 Df launchd[1:29e6] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] service state: running
+2026-09-07 00:30:07.853 Df launchd[1:29e6] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] internal event: INIT, co
+2026-09-07 00:30:07.853 Df launchd[1:29e6] [pid/720/com.apple.MTLCompilerService.26565152-3CA8-4A81-B5B2-AFC2C7594198 [985]:] Successfully spawned MTL
+2026-09-07 00:30:07.859 A  MTLCompilerService[985:3029] (libsystem_info.dylib) Membership API: translate identifier
+2026-09-07 00:30:07.860 Df MTLCompilerService[985:3029] [com.apple.libcoreservices:] _dirhelper_update_tmpdir: old=(null), new=<private>
+2026-09-07 00:30:07.874 Df MTLCompilerService[985:3029] [com.apple.xpc:connection] [0x7ff51f704420] activating connection: mach=false listener=true pe
+2026-09-07 00:30:07.876 Df MTLCompilerService[985:302a] [com.apple.xpc:connection] [0x7ff520c04080] activating connection: mach=false listener=false p
+2026-09-07 00:30:08.052 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.527 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.528 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.559 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.562 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.564 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.566 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.567 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.567 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.568 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.727 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.727 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.733 A  MTLCompilerService[985:302a] (libsystem_info.dylib) Retrieve User by ID
+2026-09-07 00:30:08.734 Df MTLCompilerService[985:302a] [com.apple.xpc:connection] [0x7ff520c05fc0] activating connection: mach=true listener=false pe
+2026-09-07 00:30:08.734 Df MTLCompilerService[985:302c] [com.apple.xpc:connection] [0x7ff5209048f0] activating connection: mach=true listener=false pe
+2026-09-07 00:30:08.925 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.925 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.925 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.934 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.936 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.971 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.975 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.975 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.979 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:08.980 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:08.980 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:08.999 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:09.081 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:09.103 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:09.103 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:09.111 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:09.113 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:09.113 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:09.118 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:09.119 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation BEGIN (ParentProcessName=com_apple_WebKit_GPU_720) Build request: MT
+2026-09-07 00:30:09.119 Df MTLCompilerService[985:302a] (MTLCompiler) MTLCompiler upgrade pass forced to use air version 2.7
+2026-09-07 00:30:09.126 Df MTLCompilerService[985:302a] (MTLCompiler) Compilation SUCCESS (ParentProcessName=com_apple_WebKit_GPU_720)<private> (TYPE=
+2026-09-07 00:30:11.301 Df WindowServer[195:2eb4] [com.apple.xpc:connection] [0x7fd56c947170] Re-initialization successful; calling out to event handl

@@ -1,0 +1,5 @@
+PANIC=NO (newest report 02:34 pre-boot shutdown_stall; 02:14 WindowServer logs pre-boot)
+SPONTANEOUS_REBOOT=NO
+GPU_RESTART=NO
+WINDOWSERVER_CRASH=NO (pid 195 running)
+DISPLAYPOLICYD_LOOP=NO (pid 143)

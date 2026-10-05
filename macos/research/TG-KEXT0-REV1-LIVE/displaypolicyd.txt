@@ -1,0 +1,9 @@
+2026-09-07 00:24:53.369 A  displaypolicyd[143:328] (libsystem_info.dylib) Retrieve User by ID
+2026-09-07 00:24:53.428 E  displaypolicyd[143:328] [com.apple.defaults:User Defaults] All kCFPreferencesCurrentUser domains in this process will be vo
+2026-09-07 00:24:53.428 Df displaypolicyd[143:328] [com.apple.xpc:connection] [0x7f7c1af04e90] activating connection: mach=true listener=false peer=fa
+2026-09-07 00:24:56.116 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] (reg) gpu 0xf96f flags 0x20 (DG) vid.did=10de.2504 b:d:f=1:0:0 
+2026-09-07 00:24:56.117 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0xc000020 (DG,driversStarted,hasGPUC) vid.di
+2026-09-07 00:24:56.525 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] event type=GpuAdded (0x1) gpuId=0x3b65 (ku)
+2026-09-07 00:24:56.526 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0xbe000020 (DG,published,driversStarted,hasGPUC,qu
+2026-09-07 00:25:58.302 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] event type=AgdpPublished (0x10000002) gpuId=0x3b65 (ku)
+2026-09-07 00:25:58.303 Df displaypolicyd[143:328] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0x9e000020 (DG,published,driversStarted,hasGPUC,pu

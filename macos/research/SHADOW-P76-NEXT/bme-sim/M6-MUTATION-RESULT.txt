@@ -1,0 +1,26 @@
+-- MUT_SKIP_PRECONDITIONS --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_PRECONDITIONS exit=134
+MUT_SKIP_PRECONDITIONS: CAUGHT
+-- MUT_ALLOW_BME_DURING_GATEA --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ALLOW_BME_DURING_GATEA exit=134
+MUT_ALLOW_BME_DURING_GATEA: CAUGHT
+-- MUT_ACCEPT_DEPRECATED_API --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ACCEPT_DEPRECATED_API exit=134
+MUT_ACCEPT_DEPRECATED_API: CAUGHT
+-- MUT_DOUBLE_ENABLE_FLIP --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_DOUBLE_ENABLE_FLIP exit=134
+MUT_DOUBLE_ENABLE_FLIP: CAUGHT
+-- MUT_IGNORE_UNKNOWN_BITS --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_IGNORE_UNKNOWN_BITS exit=134
+MUT_IGNORE_UNKNOWN_BITS: CAUGHT
+BME_MUTATIONS_CAUGHT = 5/5

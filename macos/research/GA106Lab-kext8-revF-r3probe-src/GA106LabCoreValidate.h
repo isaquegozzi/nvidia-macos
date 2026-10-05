@@ -1,0 +1,345 @@
+// GA106LabCoreValidate.h — validadores determinísticos compartilhados.
+//
+// Usado pela produção (GA106LabMmioFlow.hpp + GA106LabRealOps.hpp, kernel)
+// E pelos testes offline (GA106LabMockOps.hpp + harness userspace).
+// Lógica pura, sem IOKit/hardware, sem callbacks arbitrários.
+//
+// Encoding verificado nos headers locais (MacOSX.sdk):
+//   IOMapTypes.h:
+//     kIOMapCacheMask  = 0x00000f00
+//     kIOMapCacheShift = 8
+//     kIODefaultCache=0, kIOInhibitCache=1, kIOWriteThru=2,
+//     kIOCopyback=3, kIOWriteCombine=4, ...
+//     kIOMapDefaultCache     = 0<<8 = 0x0000
+//     kIOMapInhibitCache     = 1<<8 = 0x0100
+//     kIOMapWriteThruCache   = 2<<8 = 0x0200
+//     kIOMapCopybackCache    = 3<<8 = 0x0300
+//     kIOMapWriteCombineCache= 4<<8 = 0x0400
+//     kIOMapReadOnly         = 0x00001000
+//   Portanto:
+//     ReadOnly+Inhibit  = 0x1100 (único aceito)
+//     ReadOnly+Copyback = 0x1300 (DEVE falhar: contém bit 0x0100 mas
+//       campo cache 0x0300 != 0x0100; o check antigo por REQUIRED_BITS
+//       aceitava incorretamente porque (0x1300 & 0x1100)==0x1100).
+//     ReadOnly+WriteCombine = 0x1400 (DEVE falhar)
+//     ReadOnly+Default      = 0x1000 (DEVE falhar)
+//     Inhibit sem ReadOnly  = 0x0100 (DEVE falhar)
+//     ReadOnly sem Inhibit  = 0x1000 (DEVE falhar)
+//
+// Política exata (permite bits ortogonais que o framework possa adicionar
+// fora de ReadOnly+CacheMask, ex. kIOMapAnywhere normalizado):
+//   ((opts & ReadOnly) != 0) && ((opts & CacheMask) == Inhibit)
+// Rejeita explicitamente qualquer cache mode != Inhibit.
+//
+// Sem dependência de headers kernel aqui (constantes numéricas); o
+// GA106Lab.cpp faz static_assert contra kIOMap* reais para provar
+// equivalência de domínio/shift.
+
+#ifndef GA106LAB_CORE_VALIDATE_H
+#define GA106LAB_CORE_VALIDATE_H
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// --- Encoding verificado (espelha IOMapTypes.h, já shiftado) ---
+#define GA106LAB_MAP_READONLY_BIT      0x00001000u
+#define GA106LAB_MAP_CACHE_MASK        0x00000F00u
+#define GA106LAB_MAP_CACHE_INHIBIT     0x00000100u
+#define GA106LAB_MAP_CACHE_DEFAULT     0x00000000u
+#define GA106LAB_MAP_CACHE_WRITETHRU   0x00000200u
+#define GA106LAB_MAP_CACHE_COPYBACK    0x00000300u
+#define GA106LAB_MAP_CACHE_WRITECOMBINE 0x00000400u
+
+// --- BAR0 baseline (mesma constante da produção) ---
+#define GA106LAB_BAR0_EXPECTED_LENGTH  (0x1000000ULL)
+
+// --- Identidade / chip ---
+#define GA106LAB_VENDOR_NVIDIA         0x10DEu
+#define GA106LAB_DEVICE_GA106          0x2504u
+#define GA106LAB_CMD_MSE_BIT           0x2u
+#define GA106LAB_MMIO_CHIP_MASK        0x1FF00000u
+#define GA106LAB_MMIO_CHIP_SHIFT       20u
+#define GA106LAB_MMIO_CHIP_GA106       0x176u
+
+// Validação exata de map options: somente ReadOnly + InhibitCache.
+// Retorna 1 = válido, 0 = inválido.
+static inline int GA106LabMapOptionsValidROInhibit(uint32_t mapOpts)
+{
+    int roOk = ((mapOpts & GA106LAB_MAP_READONLY_BIT) != 0u);
+    int cacheOk = ((mapOpts & GA106LAB_MAP_CACHE_MASK) ==
+                   GA106LAB_MAP_CACHE_INHIBIT);
+    return (roOk && cacheOk) ? 1 : 0;
+}
+
+// Validação exata de map WRITABLE+InhibitCache (Gate B, R2): mesma exclusividade
+// de cache que RO+Inhibit, mas SEM o bit ReadOnly. Rejeita WC/Default/Copyback,
+// WriteThru, modos posted* e qualquer mapa RO. UC = Inhibit (SDK IOMapTypes.h:
+// kIOInhibitCache=1 => 0x100; sem WC => stores ordenados em x86).
+// Retorna 1 = válido, 0 = inválido.
+static inline int GA106LabMapOptionsValidWritableInhibit(uint32_t mapOpts)
+{
+    int writableOk = ((mapOpts & GA106LAB_MAP_READONLY_BIT) == 0u);
+    int cacheOk = ((mapOpts & GA106LAB_MAP_CACHE_MASK) ==
+                   GA106LAB_MAP_CACHE_INHIBIT);
+    return (writableOk && cacheOk) ? 1 : 0;
+}
+
+// MSE já ligado? (nunca habilitar; abortar se off)
+static inline int GA106LabCommandMseOn(uint16_t cmd)
+{
+    return ((cmd & GA106LAB_CMD_MSE_BIT) != 0u) ? 1 : 0;
+}
+
+// BAR0 raw válido? Rejeita I/O (bit0) e 64-bit/prefetch (bits 2:1).
+static inline int GA106LabBar0RawValid(uint32_t bar0Raw)
+{
+    if ((bar0Raw & 0x1u) != 0u) {
+        return 0;
+    }
+    if ((bar0Raw & 0x6u) != 0u) {
+        return 0;
+    }
+    return 1;
+}
+
+static inline uint64_t GA106LabBar0BaseFromRaw(uint32_t bar0Raw)
+{
+    return (uint64_t)(bar0Raw & 0xFFFFFFF0u);
+}
+
+// Match estrito de resource: 16 MiB + base == BAR0 atual.
+static inline int GA106LabBarResourceMatches(uint64_t len, uint64_t phys,
+                                             uint64_t bar0Base)
+{
+    return (len == GA106LAB_BAR0_EXPECTED_LENGTH && phys == bar0Base) ? 1 : 0;
+}
+
+// Alinhamento do offset fixo (4 bytes).
+static inline int GA106LabAlignmentValid(uint32_t offset)
+{
+    return ((offset % 4u) == 0u) ? 1 : 0;
+}
+
+// Bounds overflow-safe: offset+width <= mapLen.
+static inline int GA106LabBoundsValid(uint32_t offset, uint32_t width,
+                                      uint64_t mapLen)
+{
+    uint64_t end;
+    if ((uint64_t)width > mapLen) {
+        return 0;
+    }
+    end = (uint64_t)offset + (uint64_t)width;
+    // Detecta wrap (impossível com valores atuais, mas à prova de futuro).
+    if (end < (uint64_t)offset) {
+        return 0;
+    }
+    return (end <= mapLen) ? 1 : 0;
+}
+
+// Absent-device: ffff / zero (sem retry).
+static inline int GA106LabRawIsAbsent(uint32_t raw)
+{
+    return (raw == 0xFFFFFFFFu || raw == 0x00000000u) ? 1 : 0;
+}
+
+static inline uint32_t GA106LabChipFromRaw(uint32_t raw)
+{
+    return (raw & GA106LAB_MMIO_CHIP_MASK) >> GA106LAB_MMIO_CHIP_SHIFT;
+}
+
+static inline int GA106LabChipIsGA106(uint32_t raw)
+{
+    return (GA106LabChipFromRaw(raw) == GA106LAB_MMIO_CHIP_GA106) ? 1 : 0;
+}
+
+// Sysmem DMA address validation (GSP-DMA1, compartilhado Real/Mock):
+// hi/lo decomposition round-trip dos campos de NV_PFB_NISO_FLUSH_*
+// (LO=bits 39:8, HI=bits 63:40) + sem overflow em addr+4096.
+static inline int GA106LabSysmemAddressValid(uint64_t addr)
+{
+    uint32_t lo;
+    uint32_t hi;
+    uint64_t roundtrip;
+    lo = (uint32_t)((addr >> 8u) & 0xFFFFFFFFu);
+    hi = (uint32_t)((addr >> 40u) & 0xFFFFFFu);
+    roundtrip = (((uint64_t)hi) << 40u) | (((uint64_t)lo) << 8u) |
+                (addr & 0xFFu);
+    if (roundtrip != addr) {
+        return 0;
+    }
+    if (addr + (uint64_t)4096u < addr) {
+        return 0;
+    }
+    return 1;
+}
+
+// DMA width bound (HARD-6H R2 additive, NOT wired into flows yet):
+// Upstream nova-hal-tu102-gfw.rs dma_mask 47 + P78 VA<2^47.
+// Existing GA106LabSysmemAddressValid() acima permanece intacto (compat);
+// este helper é o contrato futuro para genSegments/flush representability.
+// Retorna 1 = IOVA 4KiB inteiramente abaixo de 2^47.
+#define GA106LAB_DMA47_LIMIT (1ULL << 47)
+
+static inline int GA106LabSysmemAddressValid47(uint64_t addr)
+{
+    if (!GA106LabSysmemAddressValid(addr)) {
+        return 0;
+    }
+    if (addr >= GA106LAB_DMA47_LIMIT) {
+        return 0;
+    }
+    if (addr + (uint64_t)4096u > GA106LAB_DMA47_LIMIT) {
+        return 0;
+    }
+    return 1;
+}
+
+// Gate B flush-register pair (TG-KEXT8.1, reconfirmed em
+// SYSMEM-FLUSH-SPEC-P66-ARCHIVE/FLUSH-REGISTER-PROOF.md):
+// NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI @0x100c40 (23:0 = addr[63:40]),
+// NV_PFB_NISO_FLUSH_SYSMEM_ADDR (LO) @0x100c10 (31:0 = addr[39:8]).
+// Ordem de implementação HI->LO (não mandato de HW afirmado).
+#define GA106LAB_GATEB_LO_OFFSET 0x000100c10u
+#define GA106LAB_GATEB_HI_OFFSET 0x000100c40u
+#define GA106LAB_GATEB_WIDTH     4u
+
+// NV_PMC_BOOT_42 CHIP_ID: bits 29:20 (10 bits, Astra finding).
+// Helper/policy DISTINTOS do BOOT_0 (bits 28:20, 9 bits). BOOT_0 intacto.
+// Contraexemplo: raw 0x376000A1 passa na máscara 9-bit (0x176) mas deve
+// FALHAR na máscara 10-bit (0x376 != 0x176).
+#define GA106LAB_BOOT42_CHIP_MASK  0x3FF00000u
+#define GA106LAB_BOOT42_CHIP_SHIFT 20u
+
+static inline uint32_t GA106LabBoot42ChipFromRaw(uint32_t raw)
+{
+    return (raw & GA106LAB_BOOT42_CHIP_MASK) >> GA106LAB_BOOT42_CHIP_SHIFT;
+}
+
+static inline int GA106LabBoot42IsGA106(uint32_t raw)
+{
+    return (GA106LabBoot42ChipFromRaw(raw) == GA106LAB_MMIO_CHIP_GA106) ? 1 : 0;
+}
+
+// GFW_BOOT readiness (TG-KEXT6, reconfirmado em fontes primárias Nova/OpenRM
+// drivers/gpu/nova-core/regs.rs + gfw.rs/hal/tu102.rs):
+// - NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PRIV_LEVEL_MASK @0x118128, bit 0
+//   read_protection_level0 = gate de acesso (FWSEC baixou a proteção).
+// - NV_PGC6_AON_SECURE_SCRATCH_GROUP_05[0] @0x118234, bits 7:0 progress;
+//   0xff = completed. Demais valores = not complete yet (sem erro inventado).
+// - Polling: 1 ms / timeout 4 s / 4000 iterações; MAP reads bounded:
+//   gate <= 4000, progress <= 4000, total <= 8000.
+#define GA106LAB_GFW_GATE_OFFSET      0x000118128u
+#define GA106LAB_GFW_PROGRESS_OFFSET  0x000118234u
+#define GA106LAB_GFW_GATE_MASK        0x1u
+#define GA106LAB_GFW_PROGRESS_MASK    0xFFu
+#define GA106LAB_GFW_COMPLETED_VALUE  0xFFu
+#define GA106LAB_GFW_POLL_INTERVAL_MS 1u
+#define GA106LAB_GFW_POLL_TIMEOUT_MS  4000u
+#define GA106LAB_GFW_POLL_MAX_ITERS   4000u
+#define GA106LAB_GFW_MAX_GATE_READS   4000u
+#define GA106LAB_GFW_MAX_PROGRESS_READS 4000u
+#define GA106LAB_GFW_MAX_TOTAL_READS  8000u
+// Orçamento temporal em nanossegundos (deadline monotônico real,
+// independente do contador de iterações).
+#define GA106LAB_GFW_POLL_INTERVAL_NS 1000000ULL
+#define GA106LAB_GFW_POLL_TIMEOUT_NS  4000000000ULL
+#define GA106LAB_GFW_READ_WIDTH       4u
+
+static inline int GA106LabGfwGateReady(uint32_t gateRaw)
+{
+    return ((gateRaw & GA106LAB_GFW_GATE_MASK) != 0u) ? 1 : 0;
+}
+
+static inline uint32_t GA106LabGfwProgressFromRaw(uint32_t progRaw)
+{
+    return progRaw & GA106LAB_GFW_PROGRESS_MASK;
+}
+
+static inline int GA106LabGfwProgressCompleted(uint32_t progress)
+{
+    return (progress == GA106LAB_GFW_COMPLETED_VALUE) ? 1 : 0;
+}
+
+// --- R3 Falcon/FBDMA read-only probes (revF). ---
+// Bases upstream-reportadas (nova-core falcon/sec2.rs, gsp.rs) — a CONFIRMAR
+// live pela probe (resolved = bounds ok + leituras válidas, nunca hardcode cego).
+// Todas as leituras são 32-bit RO; nenhum write em qualquer caminho R3.
+#define GA106LAB_R3_SEC2_PFALCON_BASE   0x00840000u
+#define GA106LAB_R3_SEC2_PFALCON2_BASE  0x00841000u
+#define GA106LAB_R3_GSP_PFALCON_BASE    0x00110000u
+#define GA106LAB_R3_GSP_PFALCON2_BASE   0x00111000u
+
+// Relativos PFalcon (nova-core regs.rs; mesmo layout SEC2/GSP).
+#define GA106LAB_R3_FALCON_MAILBOX0_REL 0x00000040u
+#define GA106LAB_R3_FALCON_MAILBOX1_REL 0x00000044u
+#define GA106LAB_R3_FALCON_CPUCTL_REL   0x00000100u
+#define GA106LAB_R3_FALCON_BOOTVEC_REL  0x00000104u
+#define GA106LAB_R3_FALCON_DMACTL_REL   0x0000010Cu
+#define GA106LAB_R3_FALCON_TRFBASE_REL  0x00000110u
+#define GA106LAB_R3_FALCON_TRFMOFFS_REL 0x00000114u
+#define GA106LAB_R3_FALCON_TRFCMD_REL   0x00000118u
+#define GA106LAB_R3_FALCON_TRFFBOFFS_REL 0x0000011Cu
+#define GA106LAB_R3_FALCON_TRFBASE1_REL 0x00000128u
+#define GA106LAB_R3_FALCON_HWCFG2_REL   0x000000F4u
+#define GA106LAB_R3_FALCON_ENGINE_REL   0x000003C0u
+#define GA106LAB_R3_FBIF_TRANSCFG0_REL  0x00000600u
+#define GA106LAB_R3_FBIF_CTL_REL        0x00000624u
+// Relativos PFalcon2 Peregrine (GA102+; só LEITURA em R3).
+#define GA106LAB_R3_PF2_BCR_CTRL_REL    0x00000668u
+#define GA106LAB_R3_PF2_RISCV_CPUCTL_REL 0x00000388u
+
+// Bits (nova-core regs.rs).
+#define GA106LAB_R3_CPUCTL_HALTED_BIT   0x10u   /* CPUCTL[4] */
+#define GA106LAB_R3_TRFCMD_FULL_BIT     0x01u   /* TRFCMD[0] */
+#define GA106LAB_R3_TRFCMD_IDLE_BIT     0x02u   /* TRFCMD[1] */
+#define GA106LAB_R3_BCR_VALID_BIT       0x01u   /* BCR_CTRL[0] */
+#define GA106LAB_R3_BCR_CORESEL_BIT     0x10u   /* BCR_CTRL[4]: 0=Falcon 1=Riscv */
+#define GA106LAB_R3_RISCV_ACTIVE_BIT    0x80u   /* RISCV_CPUCTL[7] */
+
+// PCI STATUS (0x06) error bits — proxy AER RO (sem config estendida).
+#define GA106LAB_R3_PCI_STATUS_ERR_MASK 0xF900u /* DPE/SSE/RMA/RTA/STA/MDP */
+
+// BAR1 large (>= 256M) — alimenta rebarBar1Large.
+#define GA106LAB_R3_BAR1_LARGE_LEN      0x10000000ULL
+
+static inline int GA106LabR3Halted(uint32_t cpuctl)
+{
+    return ((cpuctl & GA106LAB_R3_CPUCTL_HALTED_BIT) != 0u) ? 1 : 0;
+}
+
+static inline int GA106LabR3Full(uint32_t trfcmd)
+{
+    return ((trfcmd & GA106LAB_R3_TRFCMD_FULL_BIT) != 0u) ? 1 : 0;
+}
+
+static inline int GA106LabR3Idle(uint32_t trfcmd)
+{
+    return ((trfcmd & GA106LAB_R3_TRFCMD_IDLE_BIT) != 0u) ? 1 : 0;
+}
+
+static inline int GA106LabR3CoreSelectFalcon(uint32_t bcr)
+{
+    if ((bcr & GA106LAB_R3_BCR_VALID_BIT) == 0u) {
+        return 0;
+    }
+    return ((bcr & GA106LAB_R3_BCR_CORESEL_BIT) == 0u) ? 1 : 0;
+}
+
+static inline int GA106LabR3RiscvQuiet(uint32_t cpuctl)
+{
+    return ((cpuctl & GA106LAB_R3_RISCV_ACTIVE_BIT) == 0u) ? 1 : 0;
+}
+
+static inline int GA106LabR3AerClean(uint16_t statusReg)
+{
+    return (((uint32_t)statusReg & GA106LAB_R3_PCI_STATUS_ERR_MASK) == 0u) ? 1 : 0;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* GA106LAB_CORE_VALIDATE_H */

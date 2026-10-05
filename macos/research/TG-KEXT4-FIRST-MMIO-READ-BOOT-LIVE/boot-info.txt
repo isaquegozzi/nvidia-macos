@@ -1,0 +1,2 @@
+boot 4D523CC2-5EC6-4ADD-AF4F-0D043190E65D { sec = 1788842446, usec = 939794 } Tue Sep  8 01:40:46 2026  1:45  up 4 mins, 3 users, load averages: 1,38 1,02 0,48
+5bc49495a6eb5ed3af073b9558c3d48e11dad4a701b754559738fea82286a351  /Volumes/MACOS PENDR/EFI/OC/config.plist

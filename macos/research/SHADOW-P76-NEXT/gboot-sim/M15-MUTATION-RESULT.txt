@@ -1,0 +1,26 @@
+-- MUT_SKIP_ORDER --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_ORDER exit=134
+MUT_SKIP_ORDER: CAUGHT
+-- MUT_FORCE_FRTS_ERR_OK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_FORCE_FRTS_ERR_OK exit=134
+MUT_FORCE_FRTS_ERR_OK: CAUGHT
+-- MUT_ACCEPT_MBOX_NONZERO --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ACCEPT_MBOX_NONZERO exit=134
+MUT_ACCEPT_MBOX_NONZERO: CAUGHT
+-- MUT_IGNORE_RISCV_TIMEOUT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_IGNORE_RISCV_TIMEOUT exit=134
+MUT_IGNORE_RISCV_TIMEOUT: CAUGHT
+-- MUT_SWALLOW_INIT_TIMEOUT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SWALLOW_INIT_TIMEOUT exit=134
+MUT_SWALLOW_INIT_TIMEOUT: CAUGHT
+GBOOT_MUTATIONS_CAUGHT = 5/5

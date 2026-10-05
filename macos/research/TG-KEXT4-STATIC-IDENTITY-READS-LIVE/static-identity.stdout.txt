@@ -1,0 +1,2 @@
+boot42: 0x176a1000 (chip 0x176 GA106)
+readCount: 1 status: 4 validMask: 0x0000002d

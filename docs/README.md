@@ -1,3 +1,5 @@
+> Escopo histórico: este documento descreve o laboratório Linux e fases anteriores. Os protótipos macOS importados em 2026-10-05 estão resumidos em [STATUS-ATUAL](macos/STATUS-ATUAL.md).
+
 # docs/ — índice
 
 Fase 0 é 80% documentação. Código sem documento correspondente é suspeito.

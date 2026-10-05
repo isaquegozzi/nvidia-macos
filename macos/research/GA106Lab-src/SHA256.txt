@@ -1,0 +1,10 @@
+== TG-KEXT0-BUNDLE-FIX SHA256 ==
+dom  6 set 2026 16:34:58 -03
+954b406dad526cd9d8f0c571a1bfb2459201eaaec62605ec38721b91f5c88169  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/Info.plist
+e64846d5bb7773d7894751f1ed407c7f2121a4c941fafdd8c0e1f7b18a043848  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/GA106Lab.hpp
+17e8e89b5046f450a0d100850e1469fb6dcc6b01066110f03dfd55d5f3d90cfc  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/GA106Lab.cpp
+3155f80ef0252b34e1a15f8e3edacf2122476f48f223b4fa8efb8cee0cb1fe82  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/build.sh
+75188381b5ddc6044b68eadf60d3fb3dd1eda5bc89aef519e8a3d3ffa6853bc0  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/TG-KEXT0-RUNBOOK.md
+9542e8c063206b269812911915b23604e3a02298df1da26f9b2d3d6cbea86cd8  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/build/obj/GA106Lab.kext/Contents/MacOS/GA106Lab
+== OLD (substituído, preservado) ==
+d1030cdc373bf319d57ef56093068c77bf8c3a107a550ce7d375bd5c588c9ce4  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-src/GA106Lab.OLD-MH_OBJECT

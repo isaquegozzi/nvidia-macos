@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S02 // got=FAIL expected=FAIL // match=True
+reasons: fail:missing-required:EVENT-2
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

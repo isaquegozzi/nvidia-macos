@@ -1,0 +1,9 @@
+{
+  "mock": true,
+  "exif_only": true,
+  "camera": "MOCK-CAM-0",
+  "captured": "2026-09-09T00:00:00Z (synthetic timestamp, not evidence)",
+  "note": "Synthetic metadata only. No real photo. HARNESS_IS_NOT_LIVE_EVIDENCE=YES.",
+  "GPU_STATE": "UNKNOWN",
+  "LIVE_EXECUTION_AUTHORIZED": "NO"
+}

@@ -1,0 +1,4 @@
+MOCK IDENT-3 lifecycle // synthetic rehearsal fixture
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO
+mode: precondition-only + read-only identity/lifecycle observation
+writes: NONE

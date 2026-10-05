@@ -1,3 +1,5 @@
+> Escopo histórico: este documento descreve o laboratório Linux e fases anteriores. Os protótipos macOS importados em 2026-10-05 estão resumidos em [STATUS-ATUAL](macos/STATUS-ATUAL.md).
+
 # Safety — checklist obrigatório antes de QUALQUER escrita MMIO
 
 > Fase 0 = **somente leitura**. Este documento existe para que, quando (e se)

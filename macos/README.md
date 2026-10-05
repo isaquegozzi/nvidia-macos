@@ -1,40 +1,14 @@
-# macos/ — placeholder intencional (Fase 0)
+# Laboratório macOS
 
-Não há código de driver macOS nesta fase. Este diretório existe apenas para
-marcar o destino de longo prazo e impedir que código prematuro apareça aqui.
+Esta pasta contém os protótipos GA106Lab e a pesquisa realizada no macOS. O projeto está em desenvolvimento e ainda não fornece um driver gráfico utilizável para a RTX 3060.
 
-## Por que vazio?
+Comece pelo [estado consolidado](../docs/macos/STATUS-ATUAL.md). As [fontes e revisões](research) foram importadas do pacote de 2026-10-05, preservando a sequência de experimentos.
 
-A regra incremental exige antes:
+- `research/GA106Lab-*-src/`: revisões do protótipo, ferramenta `ga106ctl` e testes.
+- `research/SHADOW-*/`: modelos offline com dados simulados.
+- `research/P*-*/`: pesquisa e contratos das fases experimentais.
+- `research/IMPORT-MANIFEST.json`: origem e hashes dos arquivos publicados.
 
-1. identificação + observação no Linux (`linux/ga106-lab/`, somente leitura),
-2. documentação em `docs/` (Ampere → GA106 → Nouveau → NVK),
-3. análise e validação,
-4. só então — em fase futura — prototipação de bring-up mínimo.
+As revisões têm diferentes estados de implementação e validação. Não trate o nome da pasta ou um resultado de teste offline como prova de compatibilidade ou de funcionamento no hardware.
 
-Pular para `macos/` agora seria tentar escrever um driver sem saber o que o
-hardware espera. O custo de um erro no macOS (kernel panic, SPI/flash, T2/AMFI)
-é ordens de magnitude maior que no Linux lab.
-
-## Quando este diretório ganha conteúdo?
-
-Apenas quando todas as condições forem verdadeiras:
-
-- [ ] `docs/ga106/` descreve BARs, BIOS/VBIOS e strap da bancada real;
-- [ ] `docs/nouveau/` + `docs/nvk/` descrevem init mínimo observado (GSP/RM);
-- [ ] `docs/SAFETY.md` tem checklist de escrita MMIO aprovado em revisão;
-- [ ] existe decisão registrada em `docs/research/` autorizando a Fase N (escrita).
-
-Até lá: **não criar `.kext`, DriverKit `.dext`, IOKit, PCIDriverKit ou qualquer
-código Mach-O aqui**. Propostas de macOS entram primeiro como documento em
-`docs/research/`.
-
-## Pesquisa documental macOS (2026-09-04)
-
-Gate comparativo + ADR de entrypoint (somente docs, sem código):
-
-- `../docs/macos/driver-architecture-gate.md` — PCIDriverKit (A) vs IOKit
-  KEXT (B) com confiança por afirmação; restrição `built-in` CONFIRMED com
-  aplicabilidade à RTX UNCERTAIN; produção `0x10DE` como bloqueador prático.
-- `../docs/macos/ADR-0001-driver-entrypoint.md` — decisão: **IOKit KEXT first**
-  (PCIDriverKit diferido) para o lab PCI read-only no Hackintosh Tahoe.
+O antigo documento que descrevia esta pasta como vazia está preservado como [registro da Fase 0](../docs/macos/PLACEHOLDER-FASE0-HISTORICO.md).

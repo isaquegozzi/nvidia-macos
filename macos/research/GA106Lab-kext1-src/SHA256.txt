@@ -1,0 +1,10 @@
+314c6881f245cac2e528f6e09ea20d7d843de187002721110018b7890c57a537  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/Info.plist
+17a121b6ceebaf9d4057bf4535cf6dbe6b128ebde1fe59e9306f0ad6841db724  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/GA106Lab.hpp
+9d6ca15c449c38ffcf7785abc46b22050d60ea895644576a3046816a76a5f737  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/GA106Lab.cpp
+83090023cec2f26944ec6c40a99d07dc93ed1d8e556c9c9e94f3c3f119ee2f93  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/GA106LabUserClient.hpp
+8f4d60f042d2c792b9dfe0f24549e091ad5a52f135a2cfb5964b23295c8d503d  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/GA106LabUserClient.cpp
+784bc38a11fbc8187ef46bf893c193a920d7a719bf8a3935538f013bd04d8a57  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/GA106LabProtocol.h
+11b96c76b047764b27076f060d64291827bd6bf4506d91c6dec8e7f1e80aa889  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/ga106ctl.c
+333c9be5bde6b1aa312ae1f1937c43bd4ab9d9942d5caed99c19ed5ae8f48cfb  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/build.sh
+21a46750dcefd3f8120bedbe652c19d494f7104a7bd5e1615e81540552980ca9  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/build/obj/GA106Lab.kext/Contents/MacOS/GA106Lab
+bff2f0543fa4d182ed354594bded8d73757ab7c9db14ee00d922eca6e4498722  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-src/build/obj/ga106ctl

@@ -1,0 +1,12 @@
+RAW vendor=1022 device=1630 class=060000 rev=00
+RAW command=0000 status=0000
+RAW bar0=00000000
+RAW bar1=00000000
+RAW bar2=00000000
+RAW bar3=00000000
+RAW bar4=00000000
+RAW bar5=00000000
+RAW subsys=1022:1630 rom=00000000 capPtr=00 intLine=00 intPin=00
+DECODED identity: vendor=1022 device=1630 class=060000
+DECODED mse=off bme=off
+exit=0

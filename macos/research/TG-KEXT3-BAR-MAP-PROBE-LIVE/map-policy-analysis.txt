@@ -1,0 +1,4 @@
+raw=0x1101 required=0x1100 (RO|Inhibit)
+bit0 extra = kIOMapAnywhere (framework normalization, assumed by map() shortcut)
+(0x1101 & 0x1100)==0x1100 -> READ_ONLY YES + INHIBIT YES
+policy REQUIRED_BITS confirmed correct choice (exact equality would have false-FAILED)

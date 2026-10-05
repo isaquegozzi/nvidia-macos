@@ -1,0 +1,5 @@
+register: NV_PMC_BOOT_0
+offset: 0x00000000 width: 4
+rawValue: 0xb76000a1
+chipId: 0x176 (GA106)
+status: 4 validFlags: 0x0000003f

@@ -1,0 +1,9 @@
+CURRENT_CONFIG_SHA=5bc49495a6eb5ed3af073b9558c3d48e11dad4a701b754559738fea82286a351
+KEXT4_1_4_0_LOADED=YES
+      "GA106LabState" = "START_SUCCESS"
+      "GA106LabRevision" = "TG-KEXT4-FIRST-MMIO-READ"
+   87    0 0xffffff80046ec000 0xd000     0xd000     org.nvidia-macos.GA106Lab (1.4.0) 886E8D46-C2E8-38ED-A277-57E063AC46D9 <19 6 3>
+provider 10de:2504 BDF 01:00.0
+_windowserver      195   6,3  0,6 36628512 106168   ??  Ss    1:40     0:42.07 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33761232   5500   ??  Ss    1:40     0:00.04 /usr/libexec/displaypolicyd -k 1
+8571b6fc6cfdca6bf6b422a605b107ab045051da487a3ffb7c86139bc515c10e  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext4-first-mmio-read-src/build/obj/ga106ctl

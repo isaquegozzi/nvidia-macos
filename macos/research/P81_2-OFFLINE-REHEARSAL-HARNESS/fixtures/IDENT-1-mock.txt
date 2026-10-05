@@ -1,0 +1,5 @@
+MOCK IDENT-1 static identity // synthetic rehearsal fixture
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO
+device: MOCK-DEVICE-0000 // vendor MOCK-VENDOR-0000
+serial: MOCK-SERIAL-0000 (synthetic, no real serial)
+uuid: MOCK-UUID-0000-0000 (synthetic, no real UUID)

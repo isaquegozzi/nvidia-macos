@@ -1,0 +1,12 @@
+ABI_VALID = YES (exit 0 => cli_exit(kr=1)==0)
+ABI_SIZE = 32
+ABI_VERSION = 1
+STATUS_FINAL = 4 (MapReleased)
+READ_COUNT = 1
+REGISTER_NAME = NV_PMC_BOOT_42
+REGISTER_OFFSET = 0xA00
+REGISTER_WIDTH = 4
+BOOT42_RAW = 0x176a1000
+DECODED_CHIP_ID = 0x176
+VALID_FLAGS = 0x0000002d (Boot42|DecodedChipId|ReadCount|ReleaseConfirmed)
+RESERVED_ZERO = YES (zero-first; validator size path)

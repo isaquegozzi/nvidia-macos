@@ -1,0 +1,2 @@
+status=4 MAP_RELEASED + RELEASE_CONFIRMED bit6 set -> created+validated+released in-call
+PERSISTENT_BAR_MAP=NO (no VA/pointer retained anywhere; client holds nothing)

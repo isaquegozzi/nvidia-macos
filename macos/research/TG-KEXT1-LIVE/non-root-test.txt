@@ -1,0 +1,2 @@
+ga106ctl: open denied (-536870207); try running as root
+exit=1

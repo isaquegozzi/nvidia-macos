@@ -1,0 +1,2 @@
+_windowserver      195  13,5  0,6 36718192 102404   ??  Ss    2:35     0:55.33 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33761232   5520   ??  Ss    2:35     0:00.04 /usr/libexec/displaypolicyd -k 1

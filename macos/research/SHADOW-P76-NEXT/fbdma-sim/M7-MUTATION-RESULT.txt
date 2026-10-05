@@ -1,0 +1,26 @@
+-- MUT_SKIP_ALIGN_CHECK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_ALIGN_CHECK exit=134
+MUT_SKIP_ALIGN_CHECK: CAUGHT
+-- MUT_IGNORE_TIMEOUT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_IGNORE_TIMEOUT exit=134
+MUT_IGNORE_TIMEOUT: CAUGHT
+-- MUT_WRONG_TARGET_OK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_WRONG_TARGET_OK exit=134
+MUT_WRONG_TARGET_OK: CAUGHT
+-- MUT_CHUNK_SIZE_MISMATCH --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_CHUNK_SIZE_MISMATCH exit=134
+MUT_CHUNK_SIZE_MISMATCH: CAUGHT
+-- MUT_ZERO_LEN_OK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ZERO_LEN_OK exit=134
+MUT_ZERO_LEN_OK: CAUGHT
+FBDMA_MUTATIONS_CAUGHT = 5/5

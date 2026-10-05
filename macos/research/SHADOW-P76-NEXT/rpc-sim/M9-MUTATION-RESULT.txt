@@ -1,0 +1,26 @@
+-- MUT_ALLOW_OVERSIZE --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ALLOW_OVERSIZE exit=134
+MUT_ALLOW_OVERSIZE: CAUGHT
+-- MUT_SEQ_REUSE --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SEQ_REUSE exit=134
+MUT_SEQ_REUSE: CAUGHT
+-- MUT_SKIP_CHECKSUM --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_CHECKSUM exit=134
+MUT_SKIP_CHECKSUM: CAUGHT
+-- MUT_MISMATCH_OK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_MISMATCH_OK exit=134
+MUT_MISMATCH_OK: CAUGHT
+-- MUT_SWALLOW_TIMEOUT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SWALLOW_TIMEOUT exit=134
+MUT_SWALLOW_TIMEOUT: CAUGHT
+RPC_MUTATIONS_CAUGHT = 5/5

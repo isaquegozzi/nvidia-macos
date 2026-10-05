@@ -1,0 +1,51 @@
+== system_profiler SPDisplaysDataType ==
+2026-09-07 19:40:00.202 system_profiler[1162:12080] Device PreExisted [00000001000004ab] AMD Radeon RX Renoir Graphics
+Graphics/Displays:
+
+    Display:
+
+      Type: GPU
+      Bus: PCIe
+      PCIe Lane Width: x16
+      Vendor: NVIDIA (0x10de)
+      Device ID: 0x2504
+      Revision ID: 0x00a1
+
+    AMD Radeon RX Renoir Graphics:
+
+      Chipset Model: AMD Radeon RX Renoir Graphics
+      Type: GPU
+      Bus: PCIe
+      Slot: built-in
+      PCIe Lane Width: x16
+      VRAM (Total): 2 GB
+      Vendor: AMD (0x1002)
+      Device ID: 0x1638
+      Revision ID: 0x00c9
+      ROM Revision: 13-CEZANNE-019
+      Metal Support: Metal 3
+      Displays:
+        ED320QR S3:
+          Resolution: 1920 x 1080 (1080p FHD - Full High Definition)
+          UI Looks like: 1920 x 1080 @ 180.00Hz
+          Framebuffer Depth: 30-Bit Color (ARGB2101010)
+          Display Serial Number: A433113073W01
+          Main Display: Yes
+          Mirror: Off
+          Online: Yes
+          Rotation: Supported
+
+
+== WindowServer/displaypolicyd ==
+_windowserver      195   9,0  0,7 36654312 111400   ??  Ss    7:34     0:41.82 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33753040   5524   ??  Ss    7:34     0:00.04 /usr/libexec/displaypolicyd -k 1
+
+== AMDRadeon accelerator ==
+    | |   |   | | +-o AMDRadeonX5000_AMDVega10GraphicsAccelerator  <class AMDRadeonX5000_AMDVega10GraphicsAccelerator, id 0x1000004ab, registered, matched, active, busy 0 (13 ms), retain 90>
+    | |   |   | +-o AMDRadeonX5000_AMDVega10GraphicsAccelerator  <class AMDRadeonX5000_AMDVega10GraphicsAccelerator, id 0x1000004ab, registered, matched, active, busy 0 (13 ms), retain 89>
+
+== IONDRVFramebuffer class count ==
+       0
+
+== GA106Lab instance count ==
+1

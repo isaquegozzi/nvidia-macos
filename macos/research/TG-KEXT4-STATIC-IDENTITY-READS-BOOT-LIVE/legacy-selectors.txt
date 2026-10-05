@@ -1,0 +1,13 @@
+== version ==
+protocol: 1
+driver: 0x00010401
+== identity ==
+vendor: 10de
+device: 2504
+providerEntryID: 4294967865
+state: 1
+== status ==
+state: START_SUCCESS
+providerConfirmed: yes
+revision: 0x00010401
+3/4/5/6 NOT_RUN

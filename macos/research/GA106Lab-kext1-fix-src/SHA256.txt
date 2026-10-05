@@ -1,0 +1,14 @@
+314c6881f245cac2e528f6e09ea20d7d843de187002721110018b7890c57a537  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/Info.plist
+f1b25ba6876034816152320747b58420970bc9d9ef2e3bd98db15a31c4efc0c2  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/GA106Lab.hpp
+337ebd76d74729b469e7dd1c7439aac43767d1026f59d71e1723c6a25b869de4  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/GA106Lab.cpp
+83090023cec2f26944ec6c40a99d07dc93ed1d8e556c9c9e94f3c3f119ee2f93  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/GA106LabUserClient.hpp
+b4c9b3d61d5aee86b09c8b152f9772e089bfd98a272c964b9150721dcee24d2b  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/GA106LabUserClient.cpp
+30ae4165a1b3d7b77b9265843f4cc84683e2cc885e1ab0f55e63ae8f7718afed  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/GA106LabProtocol.h
+05efdfa8e046b7dc2c2813cf1ae633abf79f826a550f6cb9a70afe7ad60ba2d4  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/ga106ctl.c
+21cf74cacb9f65ac9359add477bcd13714f98752498def744b7bfab45a598797  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/ga106ctl-validate.h
+ff5efea35af5c57e3246028bafd692a6e4b6fc0a7b32993528804153f57d0046  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/ga106ctl-validate.c
+60b928ae0ed868c7fc47f3762217ec3408386faf17acaccbff9b789036f08083  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/test-slot.c
+a9460c2c317ef31190860d20117ea141b62fad49f94edadaabff472ba7cf48ed  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/test-contract.c
+38b3112e894a2f68a6b067c4d09ddfd4a46767077d5069a886193b7ea2b493fa  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/build.sh
+6ceed06c980644ebd45ad42652ddb0977b83c6ea7dad49327fc651d8ec8ddf2c  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/build/obj/GA106Lab.kext/Contents/MacOS/GA106Lab
+03e03da62b8cfbbd1bfde1a062eb7ed388e5a8603ee9a32bc0fe892bf0e73113  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext1-fix-src/build/obj/ga106ctl

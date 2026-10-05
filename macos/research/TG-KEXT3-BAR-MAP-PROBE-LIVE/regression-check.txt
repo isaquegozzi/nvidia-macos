@@ -1,0 +1,5 @@
+AFTER seg  7 set 2026 20:57:04 -03
+total 26304
+-rw-rw----@ 1 root  _analyticsusers  904760  7 set 20:50 shutdown_stall_2026-09-07-205044_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  932257  7 set 19:33 shutdown_stall_2026-09-07-193356_Mac-Pro-de-Isaque.shutdownStall
+PANIC=NO GPU_RESTART=NO SPONT=NO WS_CRASH=NO DP_LOOP=NO

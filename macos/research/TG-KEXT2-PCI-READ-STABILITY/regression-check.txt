@@ -1,0 +1,13 @@
+AFTER seg  7 set 2026 20:32:29 -03
+total 24536
+-rw-rw----@ 1 root  _analyticsusers  932257  7 set 19:33 shutdown_stall_2026-09-07-193356_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers   26817  7 set 19:13 com.apple.WebKit.Networking_2026-09-07-191357_Mac-Pro-de-Isaque.diag
+-rw-rw----@ 1 root  _analyticsusers  910600  7 set 18:16 shutdown_stall_2026-09-07-181646_Mac-Pro-de-Isaque.shutdownStall
+-rw-rw----@ 1 root  _analyticsusers  887155  7 set 17:42 shutdown_stall_2026-09-07-174255_Mac-Pro-de-Isaque.shutdownStall
+no new panic (newest still pre-boot 19:33)
+PANIC=NO
+GPU_RESTART=NO
+SPONTANEOUS_REBOOT=NO
+WINDOWSERVER_CRASH=NO
+DISPLAYPOLICYD_LOOP=NO
+Timestamp                       Thread     Type        Activity             PID    TTL  

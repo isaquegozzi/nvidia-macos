@@ -1,0 +1,26 @@
+-- MUT_SKIP_META_CHECK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_META_CHECK exit=134
+MUT_SKIP_META_CHECK: CAUGHT
+-- MUT_SKIP_DMA_ALIGN_CHECK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_DMA_ALIGN_CHECK exit=134
+MUT_SKIP_DMA_ALIGN_CHECK: CAUGHT
+-- MUT_RETRY_AFTER_FAIL --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_RETRY_AFTER_FAIL exit=134
+MUT_RETRY_AFTER_FAIL: CAUGHT
+-- MUT_SKIP_STAGE_ORDER --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_STAGE_ORDER exit=134
+MUT_SKIP_STAGE_ORDER: CAUGHT
+-- MUT_IGNORE_TIMEOUT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_IGNORE_TIMEOUT exit=134
+MUT_IGNORE_TIMEOUT: CAUGHT
+FWSEC_MUTATIONS_CAUGHT = 5/5

@@ -1,0 +1,2 @@
+# MOCK allowlist current=v3 // synthetic, not live evidence
+com.mock.allowlisted-driver

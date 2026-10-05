@@ -1,0 +1,4 @@
+MOCK CLOSE // scenario=S18 // got=FAIL expected=FAIL // match=True
+reasons: fail:stale-allowlist
+signed:MOCK-SIGNATURE-FULL
+HARNESS_IS_NOT_LIVE_EVIDENCE=YES GPU_STATE=UNKNOWN LIVE_EXECUTION_AUTHORIZED=NO

@@ -1,0 +1,11 @@
+ABI_VALID = YES (exit 0 => ga106ctl_mmio_cli_exit(kr=1,buf,len)==0)
+ABI_SIZE = 48 (GA106LabMmioReadV1; validator enforces sizeof)
+ABI_VERSION = 1
+STATUS_FINAL = 4 (kGA106LabMmioStatus_MapReleased)
+REGISTER_NAME = NV_PMC_BOOT_0
+REGISTER_OFFSET = 0x0
+REGISTER_WIDTH = 4
+RAW_VALUE = 0xb76000a1
+DECODED_CHIP_ID = 0x176
+VALID_FLAGS = 0x0000003f (RegisterId|Offset|Width|RawValue|ChipId|ReleaseConfirmed)
+RESERVED_ZERO = YES (kernel zero-first; validator size/version/status path)

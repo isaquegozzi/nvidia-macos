@@ -1,0 +1,4 @@
+ABI size=96 (struct) version=1 status=4=MAP_RELEASED semantic=0=BAR0 idx=0
+phys=0xFB000000 resLen=0x1000000 mapLen=0x1000000 resFlags=0(not exposed->no VALID bit) mapOpts=0x1101 state=1 validMask=0x6f status=4
+reserved: CLI never prints VA/pointers -> zero by contract + kernel zero-init
+ABI_VALID=YES

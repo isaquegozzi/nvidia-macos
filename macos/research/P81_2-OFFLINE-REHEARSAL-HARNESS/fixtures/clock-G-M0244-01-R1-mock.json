@@ -1,0 +1,8 @@
+{
+  "mock": true,
+  "method": "G-M0244-01-R1",
+  "skew_s": 0,
+  "jumps": 0,
+  "skew_bound_s": 5,
+  "note": "Synthetic clock fixture. Host clock facilities never consulted as evidence. HARNESS_IS_NOT_LIVE_EVIDENCE=YES."
+}

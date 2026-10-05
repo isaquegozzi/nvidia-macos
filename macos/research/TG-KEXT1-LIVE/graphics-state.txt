@@ -1,0 +1,19 @@
+2026-09-07 17:43:33.439 Df displaypolicyd[143:331] [com.apple.GPUWrangler:default] (reg) gpu 0xf96f flags 0x20 (DG) vid.did=10de.2504 b:d:f=1:0:0 
+2026-09-07 17:43:33.440 Df displaypolicyd[143:331] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0xc000020 (DG,driversStarted,hasGPUC) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:43:34.069 Df displaypolicyd[143:331] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0xbe000020 (DG,published,driversStarted,hasGPUC,quiet,pubSched,pubArmed) vid.did
+2026-09-07 17:44:35.099 Df WindowServer[195:385] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:44:35.174 Df displaypolicyd[143:331] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0xbe000020 (DG,published,driversStarted,hasGPUC,quiet,pubSched,pubArmed) vid.did
+2026-09-07 17:44:35.613 Df WindowServer[195:385] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 17:44:37.152 Df WindowServer[195:385] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 17:44:37.152 Df corebrightnessd[160:b25] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerStateNotificationTypeDidReconfigure
+2026-09-07 17:44:37.397 Df SecurityAgent[455:c93] [com.apple.loginUI:Windows] -[LUI2MultiWindowController _displaysDidReconfigure]:172: Display Did Reconfigure
+2026-09-07 17:44:45.114 Df WindowServer[195:385] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Posting kCGSDisplayDidReconfigure
+2026-09-07 17:44:45.114 Df loginwindow[201:b96] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerStateNotificationTypeDidReconfigure
+2026-09-07 17:44:45.114 Df corebrightnessd[160:da3] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerStateNotificationTypeDidReconfigure
+2026-09-07 17:44:45.168 Df SecurityAgent[455:c93] [com.apple.loginUI:Windows] -[LUI2MultiWindowController _displaysDidReconfigure]:172: Display Did Reconfigure
+2026-09-07 17:44:45.384 Df loginwindow[201:3be] [com.apple.loginwindow.logging:Standard] -[LoginTransition _displaysDidReconfigure] | Displays did reconfigure
+2026-09-07 17:44:51.587 Df SafeEjectGPUService[693:15ee] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:50:04.981 Df system_profiler[1047:37c8] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:50:05.000 Df system_profiler[1047:37c8] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:51:33.787 Df system_profiler[1139:3cc6] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-07 17:51:33.806 Df system_profiler[1139:3cc6] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 

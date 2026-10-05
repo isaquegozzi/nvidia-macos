@@ -1,0 +1,12 @@
+PREFLIGHT 2026-09-07 20:32:14 -0300
+KEXT2_FIX_1_2_1_LOADED=YES
+   88    0 0xffffff80046ec000 0xc000     0xc000     org.nvidia-macos.GA106Lab (1.2.1) 1796CBF2-9CD0-3F61-9990-370D125F971B <19 6 3>
+      "IOProviderClass" = "IOPCIDevice"
+      "GA106LabProviderEntryID" = 4294967865
+      "GA106LabState" = "START_SUCCESS"
+      "GA106LabRevision" = "TG-KEXT2-PCI-ADDR-FIX"
+      "GA106LabProviderDevice" = "2504"
+      "GA106LabProviderVendor" = "10de"
+provider GFX0 01:00.0 10de:2504
+AMD HEALTHY / WS 195 HEALTHY / DP 143 HEALTHY
+BIN SHA=550d916b959667bca473b454f219985c67d749add97dba4c6c288b761fb63e22

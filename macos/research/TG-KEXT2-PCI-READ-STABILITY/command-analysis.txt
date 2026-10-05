@@ -1,0 +1,10 @@
+COMMAND_A=0003
+COMMAND_B=0003
+COMMAND_REGISTER_UNCHANGED=YES
+MSE_A=on (bit1 of 0003)
+MSE_B=on
+MSE_UNCHANGED=YES
+BME_A=off (bit2 of 0003 clear)
+BME_B=off
+BME_UNCHANGED=YES
+NOTE: raw is truth; 0x0003 not hardcoded as universal, criterion is A==B

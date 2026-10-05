@@ -1,0 +1,56 @@
+2026-09-06 16:45:13.000 Ts [0:0] === system boot: 06531E7E-0C2F-48FE-9336-4C65743914DF
+2026-09-06 16:45:17.745 Df kernel[0:7a] [System Event] [4745598721] [INFO] [Subsystem: launchd] [Event: boot] Early boot
+2026-09-06 16:45:17.586 Df launchd[1:23a] [system/com.apple.loginwindow.6A1F5898-05AA-443D-9F9D-A0CC4E2FB6CB [198]:] ser
+2026-09-06 16:45:18.225 Df loginwindow[198:3be] [com.apple.runningboard:connection] Initializing connection
+2026-09-06 16:45:18.225 Df loginwindow[198:3be] [com.apple.runningboard:process] Removing all cached process handles
+2026-09-06 16:45:18.225 Df loginwindow[198:4b4] [com.apple.runningboard:connection] Sending handshake request attempt #1
+2026-09-06 16:45:18.225 Df loginwindow[198:4b4] [com.apple.runningboard:connection] Creating connection to com.apple.run
+2026-09-06 16:45:18.225 Df loginwindow[198:4b4] [com.apple.xpc:connection] [0x7ff063d04080] activating connection: mach=
+2026-09-06 16:45:18.338 Df launchd[1:23b] [system/com.apple.loginwindow.6A1F5898-05AA-443D-9F9D-A0CC4E2FB6CB [198]:] job
+2026-09-06 16:45:18.338 Df runningboardd[206:4e0] [com.apple.runningboard:general] [osservice<com.apple.loginwindow>:198
+2026-09-06 16:45:18.343 Df loginwindow[198:4b4] [com.apple.runningboard:connection] Handshake succeeded
+2026-09-06 16:45:18.343 Df loginwindow[198:4b4] [com.apple.runningboard:connection] Identity resolved as osservice<com.a
+2026-09-06 16:45:19.358 Df launchd[1:2c4] [loginwindow/198/com.apple.UserEventAgent-LoginWindow [271]:] service state: r
+2026-09-06 16:45:19.373 Df launchd[1:2c4] [loginwindow/198/com.apple.universalaccessd [272]:] service state: running
+2026-09-06 16:45:19.390 Df launchd[1:2c4] [loginwindow/198/com.apple.imklaunchagent [269]:] service state: running
+2026-09-06 16:45:19.463 Df launchd[1:2c4] [loginwindow/198/com.apple.pluginkit.pkd [282]:] service state: running
+2026-09-06 16:46:22.637 Df WindowServer[192:383] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Pos
+2026-09-06 16:46:22.642 Df launchd[1:9f0] [loginwindow/198/com.apple.preference.displays.MirrorDisplays [395]:] service 
+2026-09-06 16:46:22.683 Df launchd[1:9f0] [loginwindow/198/com.apple.universalaccessd [272]:] job state = running
+2026-09-06 16:46:22.700 Df launchd[1:9f0] [loginwindow/198/com.apple.preference.displays.MirrorDisplays [395]:] job stat
+2026-09-06 16:46:22.865 Df loginwindow[198:ad1] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManage
+2026-09-06 16:46:22.920 Df launchd[1:a5c] [loginwindow/198/com.apple.ViewBridgeAuxiliary [400]:] service state: running
+2026-09-06 16:46:22.962 Df launchd[1:a53] [loginwindow/198/com.apple.ViewBridgeAuxiliary [400]:] job state = running
+2026-09-06 16:46:23.361 Df loginwindow[198:3be] [com.apple.macbuddy:SAUserSetupState] 'Setup Assistant' is not running
+2026-09-06 16:46:23.376 Df loginwindow[198:bc8] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManage
+2026-09-06 16:46:24.050 Df WindowServer[192:383] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Pos
+2026-09-06 16:46:24.050 Df corebrightnessd[158:ad4] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerSta
+2026-09-06 16:46:24.278 Df launchd[1:9f0] [loginwindow/198/com.apple.preference.displays.MirrorDisplays [395]:] service 
+2026-09-06 16:46:24.288 Df SecurityAgent[411:bca] [com.apple.loginUI:Windows] -[LUI2MultiWindowController _displaysDidRe
+2026-09-06 16:46:24.794 Df launchd[1:9f0] [loginwindow/198/com.apple.CryptoTokenKit.ahp.agent [415]:] service state: run
+2026-09-06 16:46:24.827 Df launchd[1:a5c] [loginwindow/198/com.apple.ctkd [417]:] service state: running
+2026-09-06 16:46:24.920 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[ScreenSaverDaemon restartForU
+2026-09-06 16:46:25.702 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[LoginProgress closeAndRelease
+2026-09-06 16:46:25.702 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[LoginProgress progressAnimati
+2026-09-06 16:46:25.702 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[LoginProgress abortProgressUI
+2026-09-06 16:46:26.408 Df PerfPowerServices[147:b11] [com.apple.powerlog:config] Config - Device upgrade timestamp is 1
+2026-09-06 16:46:26.868 Df launchd[1:a53] [loginwindow/198:] failed lookup: name = com.apple.inputswitcher.running, flag
+2026-09-06 16:46:31.250 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[Login1 isGuestAccount] | gues
+2026-09-06 16:46:31.257 Df launchd[1:a53] [loginwindow/198:] failed lookup: name = com.apple.inputswitcher.running, flag
+2026-09-06 16:46:31.496 Df launchd[1:a5c] [loginwindow/198/com.apple.ctkd [417]:] service state: not running
+2026-09-06 16:46:31.497 Df launchd[1:a5c] [loginwindow/198/com.apple.ViewBridgeAuxiliary [400]:] service state: not runn
+2026-09-06 16:46:31.497 Df launchd[1:a5c] [loginwindow/198/com.apple.imklaunchagent [269]:] service state: not running
+2026-09-06 16:46:31.497 Df launchd[1:a5c] [loginwindow/198/com.apple.CryptoTokenKit.ahp.agent [415]:] service state: not
+2026-09-06 16:46:31.497 Df launchd[1:a5c] [loginwindow/198/com.apple.pluginkit.pkd [282]:] service state: not running
+2026-09-06 16:46:31.501 Df launchd[1:a5c] [loginwindow/198/com.apple.universalaccessd [272]:] service state: not running
+2026-09-06 16:46:31.547 Df loginwindow[198:b62] [com.apple.LocalAuthentication:Gestalt] runningInSystemContext = 1
+2026-09-06 16:46:31.550 Df loginwindow[198:b62] [com.apple.LocalAuthentication:Gestalt] runningInOsxRecovery = 0
+2026-09-06 16:46:31.559 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[ScreenSaverDaemon restartForU
+2026-09-06 16:46:31.562 Df loginwindow[198:b62] [com.apple.loginwindow.logging:Standard] -[UserInfo startMultiUserManage
+2026-09-06 16:46:32.003 Df WindowServer[192:383] [com.apple.CoreDisplay:default] [WARN] - CGXDisplaysDidReconfigure: Pos
+2026-09-06 16:46:32.003 Df corebrightnessd[158:ad4] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerSta
+2026-09-06 16:46:32.003 Df loginwindow[198:b65] [com.apple.SkyLight:display] [ Display:Power      ] Event: kPowerStateNo
+2026-09-06 16:46:32.060 Df SecurityAgent[411:bca] [com.apple.loginUI:Windows] -[LUI2MultiWindowController _displaysDidRe
+2026-09-06 16:46:32.277 Df loginwindow[198:3be] [com.apple.loginwindow.logging:Standard] -[LoginTransition _displaysDidR
+2026-09-06 16:46:50.124 Df gamepolicyd[713:1902] [com.apple.runningboard:monitor] Received state update for 198 (osservi
+2026-09-06 16:47:23.606 Df gamepolicyd[713:1ce6] [com.apple.runningboard:monitor] Received state update for 198 (osservi

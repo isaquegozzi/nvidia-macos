@@ -1,0 +1,116 @@
+#!/bin/zsh
+# build.sh — compila GA106Lab.kext com o toolchain Xcode (sem assinar/instalar).
+# Método: MANUAL_OFFICIAL_EQUIVALENT — reproduz o que o target Kernel Extension do
+# Xcode faz: compile -mkernel + link -kext (MH_KEXT_BUNDLE) + kmod libs + KMOD decl
+# no fonte (ver auditoria §3: NootedRed tem filetype KEXTBUNDLE + _kmod_info local).
+# ld -r (MH_OBJECT) é PROIBIDO como link final — objeto relocável não carrega.
+# Uso: ./build.sh (gera ./build/GA106Lab.kext). Falha estrita, sem SUCCESS falso.
+set -euo pipefail
+SRC_DIR="${0:A:h}"
+BUILD_DIR="$SRC_DIR/build"
+OBJ_DIR="$BUILD_DIR/obj"
+LOG="$BUILD_DIR/build.log"
+SDK=$(xcrun --show-sdk-path)
+KHDR="$SDK/System/Library/Frameworks/Kernel.framework/Headers"
+ARCH=x86_64
+# Alvo mínimo = SDK corrente (26.5); kernel vivo é 26.6.2.
+VERSMIN="-mmacosx-version-min=26.5"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$OBJ_DIR/GA106Lab.kext/Contents/MacOS"
+
+{
+echo "== toolchain =="
+xcodebuild -version
+xcrun clang++ --version | head -n 2
+echo "SDK=$SDK"
+echo "== compile kext =="
+xcrun clang++ -arch $ARCH -c \
+  -Os -mkernel $VERSMIN \
+  -fno-builtin -fno-stack-protector -fno-common -fapple-kext \
+  -nostdinc \
+  -I"$KHDR" \
+  -DKERNEL -DKERNEL_PRIVATE -DDRIVER_PRIVATE -DAPPLE -DNeXT \
+  -o "$OBJ_DIR/GA106Lab.o" "$SRC_DIR/GA106Lab.cpp"
+xcrun clang++ -arch $ARCH -c \
+  -Os -mkernel $VERSMIN \
+  -fno-builtin -fno-stack-protector -fno-common -fapple-kext \
+  -nostdinc \
+  -I"$KHDR" \
+  -DKERNEL -DKERNEL_PRIVATE -DDRIVER_PRIVATE -DAPPLE -DNeXT \
+  -o "$OBJ_DIR/GA106LabUserClient.o" "$SRC_DIR/GA106LabUserClient.cpp"
+echo "== link (MH_KEXT_BUNDLE, sem -r) =="
+xcrun clang++ -arch $ARCH -mkernel $VERSMIN \
+  -nostdlib -Xlinker -kext \
+  -o "$OBJ_DIR/GA106Lab.kext/Contents/MacOS/GA106Lab" \
+  "$OBJ_DIR/GA106Lab.o" "$OBJ_DIR/GA106LabUserClient.o" \
+  -lkmodc++ -lkmod -lcc_kext
+echo "== assemble =="
+cp "$SRC_DIR/Info.plist" "$OBJ_DIR/GA106Lab.kext/Contents/Info.plist"
+plutil -lint "$OBJ_DIR/GA106Lab.kext/Contents/Info.plist"
+echo "== compile cli (userspace, sem kext) =="
+xcrun clang -Os -mmacosx-version-min=26.2 -arch $ARCH \
+  -o "$OBJ_DIR/ga106ctl" "$SRC_DIR/ga106ctl.c" "$SRC_DIR/ga106ctl-validate.c" \
+  -I"$SRC_DIR" \
+  -framework IOKit -framework CoreFoundation
+echo "== compile+run testes offline (shared flow, sem kernel) =="
+xcrun clang -Os -arch $ARCH -o "$OBJ_DIR/test-slot" "$SRC_DIR/test-slot.c"
+xcrun clang -Os -arch $ARCH -o "$OBJ_DIR/test-contract" \
+  "$SRC_DIR/test-contract.c" "$SRC_DIR/ga106ctl-validate.c" \
+  -I"$SRC_DIR"
+xcrun clang -Os -arch $ARCH -o "$OBJ_DIR/test-bar-map-probe" \
+  "$SRC_DIR/test-bar-map-probe.c" "$SRC_DIR/ga106ctl-validate.c" \
+  -I"$SRC_DIR"
+# Teste do shared flow (C++ template + MockOps; mesma lógica da produção).
+xcrun clang++ -Os -std=c++17 -arch $ARCH -o "$OBJ_DIR/test-first-mmio-read" \
+  "$SRC_DIR/test-first-mmio-read.cpp" "$SRC_DIR/ga106ctl-validate.c" \
+  -I"$SRC_DIR" -framework IOKit -framework CoreFoundation
+echo "== regressão bug 00:00.0: forma 2-arg/union zerada PROIBIDA no fonte =="
+if grep -n "kIOPCIConfigSpace,\|kSpace\|configRead.*(.*," "$SRC_DIR/GA106Lab.cpp" | grep -v "^.*://"; then
+  echo "ZEROED_SPACE_REGRESSION_TEST = FAIL (forma antiga presente)"
+  exit 1
+fi
+echo "ZEROED_SPACE_REGRESSION_TEST = PASS (só wrappers 1-arg)"
+echo "== auditoria TG-KEXT4: 1 load MMIO, zero writes/configWrite/DMA/IRQ =="
+if grep -n "configWrite\|setMemoryEnable\|setBusMasterEnable\|setBusLeadEnable\|OSWrite\|write8\|write16\|write32\|write64\|IODMA\|IOInterrupt\|GSP\|firmware" "$SRC_DIR/GA106Lab.cpp" "$SRC_DIR/GA106LabRealOps.hpp" "$SRC_DIR/GA106LabMmioFlow.hpp" | grep -v "^.*://" | grep -v "NÃO\|nunca\|NUNCA\|SEM\|sem \|PROIBID\|Ausência\|ausência\|Nenhum\|nenhum\|0 .*write\|ÚNICA\|única"; then
+  echo "KEXT4_SOURCE_AUDIT = FAIL (símbolo proibido presente)"
+  exit 1
+fi
+echo "KEXT4_SOURCE_AUDIT = PASS (sem write/configWrite/DMA/IRQ)"
+# Produção tem exatamente 1 primitiva de leitura (em RealOps::read32);
+# o shared flow chama ops.read32() exatamente 1x; o wrapper não duplica.
+READS_CPP=$(grep -c "OSReadLittleInt32" "$SRC_DIR/GA106Lab.cpp" || true)
+READS_REALOPS=$(grep -c "OSReadLittleInt32" "$SRC_DIR/GA106LabRealOps.hpp" || true)
+READS_FLOW=$(grep -c "ops.read32\|ops\.read32" "$SRC_DIR/GA106LabMmioFlow.hpp" || true)
+echo "READS: GA106Lab.cpp=$READS_CPP RealOps=$READS_REALOPS FlowCalls=$READS_FLOW"
+if [ "$READS_REALOPS" != "1" ]; then
+  echo "KEXT4_SINGLE_READ_AUDIT = FAIL (RealOps OSReadLittleInt32 x$READS_REALOPS, esperado x1)"
+  exit 1
+fi
+if [ "$READS_FLOW" != "1" ]; then
+  echo "KEXT4_SINGLE_READ_AUDIT = FAIL (Flow read32 calls x$READS_FLOW, esperado x1)"
+  exit 1
+fi
+echo "KEXT4_SINGLE_READ_AUDIT = PASS (1 primitiva em RealOps, 1 chamada no shared flow)"
+echo "== auditoria ONE_SHARED_FLOW: wrapper fino, sem fluxo duplicado =="
+if grep -n "GA106LabTestSeam\|modelRead" "$SRC_DIR/GA106Lab.cpp" "$SRC_DIR/GA106LabMmioFlow.hpp" "$SRC_DIR/GA106LabRealOps.hpp" | grep -v "^.*://"; then
+  echo "DUPLICATED_MODEL_FLOW = FAIL (seam antigo ainda referenciado na produção)"
+  exit 1
+fi
+echo "DUPLICATED_MODEL_FLOW = NO"
+if ! grep -q "RunFirstMmioReadFlow" "$SRC_DIR/GA106Lab.cpp"; then
+  echo "ONE_SHARED_MMIO_FLOW = FAIL (produção não usa shared flow)"
+  exit 1
+fi
+echo "ONE_SHARED_MMIO_FLOW = YES (produção usa RunFirstMmioReadFlow)"
+"$OBJ_DIR/test-slot"
+"$OBJ_DIR/test-contract"
+"$OBJ_DIR/test-bar-map-probe"
+"$OBJ_DIR/test-first-mmio-read"
+"$OBJ_DIR/ga106ctl" 2>&1 | head -n 1 || true
+"$OBJ_DIR/ga106ctl" bogus 2>&1 | head -n 1 || true
+"$OBJ_DIR/ga106ctl" version 2>&1 | head -n 1 || true
+# (saídas acima esperadas offline: usage + service-not-found; BUILD_OK só
+# reflete compile/link/assemble/testes, cujas falhas abortam via pipefail)
+echo "BUILD_OK"
+} 2>&1 | tee "$LOG"

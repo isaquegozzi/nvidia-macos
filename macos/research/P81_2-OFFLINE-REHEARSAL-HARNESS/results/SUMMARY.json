@@ -1,0 +1,464 @@
+{
+  "stamp": {
+    "HARNESS_IS_NOT_LIVE_EVIDENCE": "YES",
+    "GPU_STATE": "UNKNOWN",
+    "LIVE_EXECUTION_AUTHORIZED": "NO",
+    "harness": "P81.2-RELAY-V3"
+  },
+  "scenarios": [
+    {
+      "scenario": "S01",
+      "expected": "PASS",
+      "got": "PASS",
+      "match": true,
+      "reasons": [
+        "pass:nominal"
+      ],
+      "desc": "PASS nominal"
+    },
+    {
+      "scenario": "S02",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:missing-required:EVENT-2"
+      ],
+      "desc": "missing artifact (EVENT-2 removed)"
+    },
+    {
+      "scenario": "S03",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:malformed-index-header"
+      ],
+      "desc": "malformed INDEX (no header)"
+    },
+    {
+      "scenario": "S04",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:hash-mismatch:IDENT-1"
+      ],
+      "desc": "bad shasum (IDENT-1 modified post-INDEX)"
+    },
+    {
+      "scenario": "S05",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:ident2-diff-outside-allowlist"
+      ],
+      "desc": "IDENT-2 diff outside allowlist"
+    },
+    {
+      "scenario": "S06",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:timeout-persistent"
+      ],
+      "desc": "command timeout 75s > 60s bound"
+    },
+    {
+      "scenario": "S07",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:timeout-persistent-retry-exhausted"
+      ],
+      "desc": "one bounded retry then ABORT (timeout persists)"
+    },
+    {
+      "scenario": "S08",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:no-video-simulated"
+      ],
+      "desc": "no-video simulated"
+    },
+    {
+      "scenario": "S09",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:panic-simulated"
+      ],
+      "desc": "panic simulated"
+    },
+    {
+      "scenario": "S10",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:no-signal-simulated"
+      ],
+      "desc": "no-signal simulated"
+    },
+    {
+      "scenario": "S11",
+      "expected": "FAIL-3",
+      "got": "FAIL-3",
+      "match": true,
+      "reasons": [
+        "fail-3:kext-unexpected-line"
+      ],
+      "desc": "unexpected extra line in driver inventory"
+    },
+    {
+      "scenario": "S12",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:clock-gate-invalid"
+      ],
+      "desc": "clock gate invalid (skew+jumps)"
+    },
+    {
+      "scenario": "S13",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:evidence-destination-space"
+      ],
+      "desc": "evidence destination 1.2GB < 5GB floor"
+    },
+    {
+      "scenario": "S14",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:save-failure"
+      ],
+      "desc": "SAVE failure"
+    },
+    {
+      "scenario": "S15",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:close-missing-signature"
+      ],
+      "desc": "CLOSE missing signature"
+    },
+    {
+      "scenario": "S16",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:operator"
+      ],
+      "desc": "operator abort"
+    },
+    {
+      "scenario": "S17",
+      "expected": "ABORT",
+      "got": "ABORT",
+      "match": true,
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "desc": "forbidden action injected (catalog entry)"
+    },
+    {
+      "scenario": "S18",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:stale-allowlist"
+      ],
+      "desc": "stale allowlist regression (v0 vs current)"
+    },
+    {
+      "scenario": "S19",
+      "expected": "BLOCKED",
+      "got": "BLOCKED",
+      "match": true,
+      "reasons": [
+        "blocked:partial-verdict"
+      ],
+      "desc": "partial-verdict extractor regression (fragment -> BLOCKED)"
+    },
+    {
+      "scenario": "S20",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "match": true,
+      "reasons": [
+        "fail:secret-detected-redacted"
+      ],
+      "desc": "secret-redaction regression (fake secret -> redacted, FAIL-closed)"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "M1-flip-status",
+      "desc": "flip CLOSE verdict token",
+      "verdict": "FAIL",
+      "reasons": [
+        "close-declared-nonpass:FAIL"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M2-remove-artifact",
+      "desc": "remove EVENT-1",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:missing-required:EVENT-1"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M3-truncate-hash",
+      "desc": "truncate one INDEX hash row",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:hash-truncated:IDENT-1"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M4-inject-extra-driver-line",
+      "desc": "inject extra driver inventory line",
+      "verdict": "FAIL-3",
+      "reasons": [
+        "fail-3:kext-unexpected-line"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M5-change-timeout",
+      "desc": "timeout 999s",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:timeout-persistent"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M6-drop-close",
+      "desc": "drop CLOSE signature",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:close-missing-signature"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M7-inject-forbidden-token",
+      "desc": "inject catalog entry as action",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M8-duplicate-verdict",
+      "desc": "duplicate verdict token in CLOSE",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:duplicate-verdict"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M9-partial-verdict",
+      "desc": "fragment verdict input",
+      "verdict": "BLOCKED",
+      "reasons": [
+        "blocked:partial-verdict"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M10-tamper-reindex",
+      "desc": "tamper text plus rebuild INDEX (ground-truth pin)",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:ground-truth-mismatch:IDENT-1"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M11-empty-inventory",
+      "desc": "empty driver inventory",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:empty-inventory"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M12-forbidden-upper",
+      "desc": "forbidden token upper-case variant",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M13-forbidden-args",
+      "desc": "forbidden token with args variant",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M14-forbidden-path",
+      "desc": "forbidden token path-qualified variant",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M15-forbidden-padded",
+      "desc": "forbidden token whitespace-padded variant",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M16-forbidden-multi",
+      "desc": "forbidden token multi-action variant",
+      "verdict": "ABORT",
+      "reasons": [
+        "abort:forbidden-action"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M17-secret-ghp",
+      "desc": "ghp token shape must redact and FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:secret-detected-redacted"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M18-secret-bearer",
+      "desc": "bearer token shape must redact and FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:secret-detected-redacted"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M19-secret-password",
+      "desc": "generic password shape must redact and FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:secret-detected-redacted"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M20-secret-aws",
+      "desc": "aws secret shape must redact and FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:secret-detected-redacted"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M21-close-prefix",
+      "desc": "CLOSE prefix injection must FAIL shape",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:close-shape-mismatch"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M22-close-suffix",
+      "desc": "CLOSE suffix injection must FAIL shape",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:close-shape-mismatch"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M23-missing-timeout",
+      "desc": "missing timeout field must FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:missing-field-timeout"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M24-missing-clock",
+      "desc": "missing clock field must FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:missing-field-clock"
+      ],
+      "killed": true,
+      "critical": true
+    },
+    {
+      "id": "M25-missing-space",
+      "desc": "missing space field must FAIL",
+      "verdict": "FAIL",
+      "reasons": [
+        "fail:missing-field-space"
+      ],
+      "killed": true,
+      "critical": true
+    }
+  ],
+  "kill_rate": 100.0,
+  "verdict": "P81_2 = ACCEPT"
+}

@@ -1,0 +1,7 @@
+CURRENT_CONFIG_SHA=5693b5ab513ac65407c963352b3056f8284d11825e4a37b17ec84e169e3b794f
+   93    0 0xffffff80046ec000 0xd000     0xd000     org.nvidia-macos.GA106Lab (1.4.1) A59FD93A-2AB5-31CD-8BB8-E7CDB642D6DC <19 6 3>
+      "GA106LabState" = "START_SUCCESS"
+      "GA106LabRevision" = "TG-KEXT4-STATIC-IDENTITY-READS"
+_windowserver      195  10,1  0,6 36718772 102424   ??  Ss    2:35     0:54.15 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon
+_displaypolicyd    143   0,0  0,0 33761232   5520   ??  Ss    2:35     0:00.04 /usr/libexec/displaypolicyd -k 1
+1f319d17a3924b7af52b54f963da69b91e86123559c2657c49b954d91beb12b2  /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext4-static-identity-src/build/obj/ga106ctl

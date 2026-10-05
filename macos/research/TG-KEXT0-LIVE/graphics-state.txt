@@ -1,0 +1,18 @@
+2026-09-06 16:45:20.604 Df displaypolicyd[141:334] [com.apple.GPUWrangler:default] (reg) gpu 0xf96f flags 0x20 (DG) vid.did=10de.2504 b:d:f=1:0:0 
+2026-09-06 16:45:20.605 Df displaypolicyd[141:334] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0xc000020 (DG,driversStarted,hasGPUC) vid.did=1002.1638 b:d:f=8:0:0 
+2026-09-06 16:45:20.769 Df kernel[0:808] (IOPCIFamily) [PCIe:0 8765824153 ns] [childPublished()] child ATY,RadeonFramebuffer(0x1000004a8) published
+2026-09-06 16:45:20.769 Df kernel[0:809] (IOPCIFamily) [PCIe:0 8765901277 ns] [childPublished()] child ATY,RadeonFramebuffer(0x1000004aa) published
+2026-09-06 16:45:20.769 Df kernel[0:80a] (IOPCIFamily) [PCIe:0 8766030570 ns] [childPublished()] child ATY,RadeonFramebuffer(0x1000004ac) published
+2026-09-06 16:45:20.949 Df kernel[0:849] (IOPCIFamily) [PCIe:0 8946091214 ns] [childPublished()] child AMDRadeonX5000_AMDVega10GraphicsAccelerator(0x1000004a7) published
+2026-09-06 16:45:20.950 Df displaypolicyd[141:334] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0xbe000020 (DG,published,driversStarted,hasGPUC,quiet,pubSched,pubArmed) vid.did=1002.1638 b:d:f=8:0
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator
+2026-09-06 16:46:22.239 Df WindowServer[192:383] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator
+2026-09-06 16:46:22.314 Df displaypolicyd[141:334] [com.apple.GPUWrangler:default] gpu 0x3b65 flags 0x9e000020 (DG,published,driversStarted,hasGPUC,pubSched,pubArmed) vid.did=1002.1638 b:d:f=8:0:0 
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator
+2026-09-06 16:46:36.117 Df SafeEjectGPUService[630:1418] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator
+2026-09-06 16:50:28.167 Df system_profiler[941:28d0] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator
+2026-09-06 16:50:28.186 Df system_profiler[941:28d0] [com.apple.GPUWrangler:default] (reg) gpu 0x3b65 flags 0x20 (DG) vid.did=1002.1638 b:d:f=8:0:0 
+gpu 0x3b65      accel 0x1000004a7     /AMDRadeonX5000_AMDVega10GraphicsAccelerator

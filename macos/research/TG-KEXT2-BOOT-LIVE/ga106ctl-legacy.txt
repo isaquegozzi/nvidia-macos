@@ -1,0 +1,15 @@
+$ /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext2-pciread-src/build/obj/ga106ctl version
+protocol: 1
+driver: 0x00010200
+exit=0
+$ /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext2-pciread-src/build/obj/ga106ctl identity
+vendor: 10de
+device: 2504
+providerEntryID: 4294967865
+state: 1
+exit=0
+$ /Users/isaque/Documents/nvidia-macos-BARE0/GA106Lab-kext2-pciread-src/build/obj/ga106ctl status
+state: START_SUCCESS
+providerConfirmed: yes
+revision: 0x00010200
+exit=0

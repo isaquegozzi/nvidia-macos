@@ -1,0 +1,5 @@
+{
+  "scenario": "S11",
+  "expected": "FAIL-3",
+  "note": "FAIL accepts FAIL or FAIL-3; S20 also requires redaction_ok"
+}

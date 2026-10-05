@@ -1,0 +1,2 @@
+2026-09-07 00:24:56.918 Df kernelmanagerd[122:7e8] Received kext load notification: org.nvidia-macos.GA106Lab
+2026-09-07 00:24:56.918 E  kernelmanager_helper[337:843] Could not process load notification in helper: Could not find: Did not find identifier (org.nvidia-macos.GA106Lab) in helper to process load no

@@ -1,0 +1,29 @@
+Timestamp               Ty Process[PID:TID]
+2026-09-07 18:17:18.000 Ts [0:0] === system boot: AC7778CF-DD31-4027-BBBE-175F6A678C6F
+18:25  up 8 mins, 3 users, load averages: 1,45 1,93 1,25
+boot-args	-v debug=0x100 keepsyms=1 -amfipassbeta
+39ea143c16434c2e4127d43cec9de45e69118bf9aa38e0aec13059118756a72e  /Volumes/MACOS PENDR/EFI/OC/config.plist
+   93    0 0xffffff80046ec000 0xc000     0xc000     org.nvidia-macos.GA106Lab (1.2.0) 8BBDD845-F2D3-3200-BBD9-D9DC8B140EAB <19 6 3>
+    | |   |   | +-o GA106Lab  <class GA106Lab, id 0x100000288, registered, matched, active, busy 0 (0 ms), retain 5>
+    | |   |   |     {
+    | |   |   |       "IOClass" = "GA106Lab"
+    | |   |   |       "CFBundleIdentifier" = "org.nvidia-macos.GA106Lab"
+    | |   |   |       "IOProviderClass" = "IOPCIDevice"
+    | |   |   |       "GA106LabProviderEntryID" = 4294967865
+    | |   |   |       "IOProbeScore" = 0
+    | |   |   |       "IOMatchedAtBoot" = Yes
+    | |   |   |       "GA106LabState" = "START_SUCCESS"
+    | |   |   |       "IOMatchCategory" = "GA106Lab"
+    | |   |   |       "GA106LabRevision" = "TG-KEXT2-PCI-READ"
+    | |   |   |       "GA106LabProviderDevice" = "2504"
+    | |   |   |       "IOPCIPrimaryMatch" = "0x250410de"
+    | |   |   |       "CFBundleIdentifierKernel" = "org.nvidia-macos.GA106Lab"
+    | |   |   |       "GA106LabProviderVendor" = "10de"
+    | |   |   |     }
+    | |   |   |     
+    | |   |   +-o HDAU@0,1  <class IOPCIDevice, id 0x10000023a, registered, matched, active, busy 0 (3 ms), retain 9>
+    | |   |       {
+          Main Display: Yes
+          Online: Yes
+COMMAND_BEFORE_EXTERNAL = NOT_AVAILABLE (sem fonte read-only confiável)
+FIRST_CALL_AT = 2026-09-07 18:25:13 -0300

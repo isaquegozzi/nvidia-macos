@@ -1,0 +1,31 @@
+}
+
+UInt32 IOPCIDevice::configRead32( IOPCIAddressSpace _space,
+                                  UInt8 offset )
+{
+	if (!parent) return (0xFFFFFFFF);
+    return (parent->configRead32(_space, offset));
+}
+
+void IOPCIDevice::configWrite32( IOPCIAddressSpace _space,
+                                 UInt8 offset, UInt32 data )
+{
+	if (!parent) return;
+	// The offset is relative to space's config space layout,
+	// so only apply the filter if the operation is on this
+	// IOPCIDevice.
+	if (_space.bits == space.bits)
+	{
+		data = configWrite32Filter(offset, data);
+	}
+    parent->configWrite32( _space, offset, data );
+}
+
+UInt16 IOPCIDevice::configRead16( IOPCIAddressSpace _space,
+                                  UInt8 offset )
+{
+	if (!parent) return (0xFFFF);
+    return (parent->configRead16(_space, offset));
+}
+
+void IOPCIDevice::configWrite16( IOPCIAddressSpace _space,

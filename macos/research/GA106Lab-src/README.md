@@ -1,0 +1,39 @@
+# GA106Lab.kext — KEXT0 de observação (fontes + build)
+
+Staging fora do repo (repo NTFS read-only): destino final `macos/GA106Lab/`.
+Spec normativa: `../TG-KEXT0-spec.md`. Fase BUNDLE-FIX (sem instalar/carregar).
+
+## Método de link (MANUAL_OFFICIAL_EQUIVALENT)
+
+`ld -r` (MH_OBJECT) PROIBIDO como final — objeto relocável não carrega (auditoria
+Astra confirmada). Equivalente ao target Kernel Extension do Xcode: compile
+`-mkernel` + link `-Xlinker -kext` (MH_KEXT_BUNDLE) + `-lkmodc++ -lkmod -lcc_kext` +
+decl `KMOD_EXPLICIT_DECL` no fonte (prova: NootedRed tem filetype KEXTBUNDLE +
+`_kmod_info` local). Lifecycle de módulo (start/stop triviais KERN_SUCCESS) é só
+infraestrutura de registro; lógica RTX vive SÓ em `GA106Lab::start(provider)`.
+
+## Arquivos
+
+- `Info.plist` — personality RTX-only (`0x250410de`), `IOProbeScore 0` explícito
+  (default; documenta sem-prioridade), categoria `GA106Lab`, deps §4 da spec.
+- `GA106Lab.hpp` — `GA106Lab : IOService`, `start`/`stop` apenas.
+- `GA106Lab.cpp` — Start: super → cast → `copyProperty` (vendor/device u16-LE
+  decodificado em CPU + class-code/built-in bytes crus + entryID + path
+  `gIOServicePlane`) → `IOLog[GA106Lab]` → true. Sem probe(), sem Open/map/config/
+  DMA/GSP. `UNAVAILABLE_WITH_ZERO_PCI_ACCESS` onde dado faltar (nunca PCI access).
+- `build.sh` — build reproduzível com toolchain Xcode (sem assinatura/instalação).
+
+## Auditoria estática (proibidas — verificar com grep antes de qualquer teste vivo)
+
+open, close, configRead*, configWrite*, mapDeviceMemory*, setMemoryEnable,
+setBusMasterEnable, reset, DMA, interrupt, BAR, GSP, firmware —
+zero CHAMADAS próprias (símbolos de vtable herdada em `nm -u` são referências,
+não chamadas — desassembly de `start()` mostra só super/cast/copyProperty/
+getBytes/IOLog/entryID/path/release/snprintf). APIs usadas: `super::start/stop`,
+`OSDynamicCast`, `copyProperty`, `getBytesNoCopy/getLength` (com null-check),
+`getRegistryEntryID`, `getPath`, `IOLog`, `snprintf`, `OSSafeReleaseNULL`,
++ start/stop triviais de módulo (infra).
+`OWN_CODE_HARDWARE_MUTATION_EXPECTED = NO`.
+`FRAMEWORK_MATCHING_HARDWARE_MUTATION = UNLIKELY` (neste provider/estado: publish
+limpo em 3 boots + `IOPCIResourced=Yes`; sem garantia para próximo boot — linguagem
+exigida pela auditoria: não atribuir ao nosso código ação do framework).

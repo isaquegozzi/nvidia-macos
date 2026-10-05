@@ -1,0 +1,31 @@
+-- MUT_SWAP_ORDER --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SWAP_ORDER exit=134
+MUT_SWAP_ORDER: CAUGHT
+-- MUT_SKIP_READBACK --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_SKIP_READBACK exit=134
+MUT_SKIP_READBACK: CAUGHT
+-- MUT_ROLLBACK_ON_MISMATCH --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ROLLBACK_ON_MISMATCH exit=134
+MUT_ROLLBACK_ON_MISMATCH: CAUGHT
+-- MUT_RETRY_AFTER_FAILURE --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_RETRY_AFTER_FAILURE exit=134
+MUT_RETRY_AFTER_FAILURE: CAUGHT
+-- MUT_ABORT_MID_WINDOW --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_ABORT_MID_WINDOW exit=134
+MUT_ABORT_MID_WINDOW: CAUGHT
+-- MUT_UNALIGNED_ACCEPT --
+run_timeout:2: nice(5) failed: operation not permitted
+run_timeout:3: nice(5) failed: operation not permitted
+MUT_UNALIGNED_ACCEPT exit=134
+MUT_UNALIGNED_ACCEPT: CAUGHT
+GATEB_MUTATIONS_CAUGHT = 6/6

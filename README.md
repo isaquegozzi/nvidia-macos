@@ -1,196 +1,120 @@
 # nvidia-macos
 
-Pesquisa de viabilidade para usar uma **NVIDIA GeForce RTX 3060 (GA106, Ampere)** no macOS. O trabalho é feito a partir de observação no Linux, e só com leitura de hardware.
-
-**Isto não é um driver e não roda no macOS.** Nenhum código deste repositório compila ou executa em macOS. A pasta `macos/` é um placeholder vazio, por decisão de projeto.
+Projeto experimental para estudar o uso de uma NVIDIA GeForce RTX 3060 LHR (GA106, `10de:2504`) no macOS. Reúne um laboratório Linux, protótipos de extensão de kernel para macOS e documentação dos experimentos.
 
 ## Estado atual
 
-Fase 0 (laboratório de pesquisa no Linux), em andamento.
+**Em desenvolvimento. Ainda não oferece um driver gráfico utilizável, aceleração de desktop ou suporte a Metal para a RTX 3060.**
 
-O que já existe:
+O projeto já passou da fase exclusivamente documental no macOS. Os arquivos importados em 5 de outubro de 2026 incluem código do GA106Lab, ferramenta de comunicação com o kernel, testes offline e registros de leituras realizadas na bancada.
 
-- Quatro comandos de linha de comando prontos para coletar e comparar dados da placa de vídeo.
-- Uma biblioteca C++20 portátil com o modelo do dispositivo PCI e a tabela de IDs do GA106.
-- 44 documentos de pesquisa em `docs/`, incluindo o registro de segurança e duas ADRs (Architecture Decision Records, documentos que registram decisões e o motivo de cada uma).
-- Dois "baseline" reais medidos em uma RTX 3060 de verdade, guardados em `artifacts/`.
+| Parte do projeto | Situação |
+|---|---|
+| Laboratório Linux | Implementado: identificação PCI/DRM, coleta de estado e comparação de resultados. |
+| Extensão GA106Lab para macOS | Protótipo com várias revisões de fonte. Há registros de carregamento e comunicação com a extensão. |
+| Leituras PCI e MMIO | Resultados de hardware registrados nos documentos do Mac. Não foram repetidos nesta importação. |
+| Memória, canais e envio de comandos | Código experimental e modelos offline; isso não comprova execução real pela GPU. |
+| Inicialização completa da GPU, GSP e DMA | Ainda não demonstrada pelo material consolidado. |
+| Aceleração gráfica e Metal | Objetivo futuro, sem suporte funcional demonstrado. |
 
-O que ainda não existe:
+O [estado consolidado](docs/macos/STATUS-ATUAL.md) diferencia resultados registrados no hardware, testes offline e etapas pendentes. Arquivos como `CURRENT-STATE.md` dentro do arquivo de pesquisa são fotografias de fases anteriores, não uma descrição automática do estado atual da máquina.
 
-- Qualquer código que escreva no hardware. A fase atual proíbe isso explicitamente.
-- Qualquer código de macOS, kext ou dext.
-- Cobertura de teste para a parte que coleta dados: os testes cobrem a biblioteca comum e a lógica de comparação, não a leitura de PCI/DRM.
+## O que está implementado
 
-Uma ressalva honesta: o `docs/SAFETY.md` e o índice `docs/README.md` ainda descrevem o estado mais antigo do projeto, quando os comandos de leitura ainda não existiam. A descrição acima vem de `linux/ga106-lab/README.md` e de `docs/macos/TGM0-HANDOFF.md`, que estão atualizados.
+### Laboratório Linux
 
-## Funcionalidades implementadas
+O programa `ga106-lab` oferece:
 
-### Completo
+- `info`: identifica a placa e lê informações de PCI e DRM.
+- `baseline`: registra o estado observado em texto e JSON.
+- `baseline --compare`: compara dois registros e destaca mudanças.
+- `lab-status`: apresenta as condições da bancada e seus bloqueios.
 
-O executável `ga106-lab` (somente Linux) tem quatro comandos:
+A biblioteca em `common/` e os testes de lógica não dependem de uma GPU real.
 
-- **`info`** — relatório passivo da GPU lido de `/sys/bus/pci/devices`: identificadores, revisão, BARs (os blocos de memória e portos mapeados no barramento PCIe), grupo IOMMU, nó NUMA, nós DRM e VRAM.
-- **`baseline`** — instantâneo reproduzível do estado da máquina, gravado em `baseline.txt` (leitura humana) e `baseline.json`. Cobre identidade, PCIe, driver, DRM, memória, GSP, Vulkan, logs do kernel e processos usando a GPU.
-- **`baseline --compare`** — comparação determinística entre dois `baseline.json`. Separa o que é identidade, estático, semi-estático e dinâmico, para que uma mudança relevante não se perca no meio do ruído.
-- **`lab-status`** — relatório de situação da bancada. Avalia se o desktop pode rodar sem a NVIDIA e, separadamente, se a placa está pronta para leitura de MMIO.
+### Protótipos macOS
 
-Também existe `scripts/tinygpu-match-check.py`, um avaliador em Python que só faz análise estática: ele lê um snapshot de IORegistry do macOS e diz se o TinyGPU (DriverKit) teria chance de casar com o dispositivo, retornando `LIKELY_MATCH`, `LIKELY_NO_MATCH` ou `INDETERMINATE`. Não compila nem carrega nada.
+A pasta [macos/research](macos/research) contém 25 revisões de fonte do GA106Lab, preservadas com seus nomes originais. Elas mostram a evolução da ligação ao dispositivo PCI até comunicação com o programa `ga106ctl`, leitura de configuração PCI, leitura de registradores e experimentos de memória.
 
-### Planejado, sem código
-
-Três scripts de inspeção em `linux/tools/` estão apenas como ideia, e `pci_scan.cpp` e `bar_view.cpp` estão propostos para quando a fase de escrita for autorizada.
+Há também modelos e testes para canais, memória virtual, ciclo de vida dos objetos e envio de comandos. Cada revisão tem seu próprio escopo: a existência de uma operação no código não significa que ela foi validada no hardware.
 
 ## Tecnologias
 
-- **C++20** — padrão declarado no `CMakeLists.txt`. O código usa `std::optional`, `std::array`, `std::from_chars`, `std::filesystem`, `inline constexpr` e `[[nodiscard]]`. Não usa recursos exclusivos de C++20 como `std::format` ou conceitos.
-- **CMake 3.20 ou superior** — `cmake_minimum_required(VERSION 3.20)`.
-- **Sem dependências externas.** Não há biblioteca de terceiros, nem cabeçalhos de kernel, nem headers de DRM, nem VFIO. O JSON é escrito à mão justamente para evitar uma dependência.
-- **Linux** — toda leitura vem de sysfs (`/sys/bus/pci`, `/sys/class/drm`, `/sys/class/graphics`) e de `/proc`. Ferramentas externas (`lspci`, `nvidia-smi`, `modinfo`, `vulkaninfo`, `journalctl`) são chamadas via `popen` e são opcionais: se faltarem, o campo correspondente sai como `unknown`.
-- **Python 3** — só no `scripts/tinygpu-match-check.py`, apenas com a biblioteca padrão.
-
-Bancada de referência registrada em `docs/macos/TGM0-HANDOFF.md` e nos baselines: CachyOS com `Linux 7.2.2-1-cachyos`, clang 22.1.8, RTX 3060 Laptop (`10de:2504`), Ryzen 5 5600G com Radeon Vega integrada (`1002:1638`). Alvo final: macOS Tahoe em Hackintosh Intel.
+- C++20 e CMake no laboratório Linux.
+- C e C++ nos protótipos macOS e testes de modelos.
+- IOKit e extensões de kernel no macOS.
+- Python 3 para análise estática e ferramentas de pesquisa.
+- Xcode e SDK de kernel para compilar os protótipos no macOS.
 
 ## Como executar
 
-Requisitos: Linux, CMake 3.20 ou superior e um compilador com suporte a C++20 (GCC 11+ ou Clang 13+). Nada disso precisa de root para compilar, testar ou rodar.
+### Laboratório Linux
+
+Requisitos: Linux, CMake 3.20 ou superior e compilador com suporte a C++20.
 
 ```bash
-# configurar, compilar e rodar os testes
-./scripts/build.sh
-
-# ou passo a passo
 cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build build --parallel
 ctest --test-dir build --output-on-failure
-```
 
-O script aceita `--clean`, `--no-test` e `--help`, e respeita as variáveis `BUILD_DIR` e `CMAKE_GENERATOR`.
-
-Depois de compilar, o executável fica em `build/linux/ga106-lab/ga106-lab`.
-
-### Hardware necessário
-
-Não é obrigatório ter uma RTX 3060 para compilar ou rodar os testes. Mas, para que a saída signifique alguma coisa, é preciso ter a placa real: `lab-status` tem o endereço `0000:01:00.0` e o ID `0x10de:0x2504` fixos no código, porque a bancada foi montada em torno deles. Sem a placa, os comandos continuam rodando e imprimem `unknown`, mas o veredito final fica `unknown` em vez de `READY` ou `BLOCKED`.
-
-## Como usar
-
-```bash
-# relatório rápido da placa
 ./build/linux/ga106-lab/ga106-lab info
-
-# instantâneo completo, impresso na tela
-./build/linux/ga106-lab/ga106-lab baseline --stdout
-
-# instantâneo gravado em disco
 ./build/linux/ga106-lab/ga106-lab baseline --out-dir /tmp/ga106-baseline
-
-# comparar dois estados
-./build/linux/ga106-lab/ga106-lab baseline --compare \
-  /tmp/ga106-antigo/baseline.json /tmp/ga106-novo/baseline.json
-
-# falhar se identidade ou estado estático mudarem (útil em CI)
-./build/linux/ga106-lab/ga106-lab baseline --compare \
-  antigo.json novo.json --strict
-echo "exit=$?"
-
-# situação da bancada
-./build/linux/ga106-lab/ga106-lab lab-status
 ```
 
-O `baseline` grava por padrão em `artifacts/baselines/<UTC>/`. Esse diretório está no `.gitignore`: os instantâneos são reproduzíveis, então não fazem sentido no histórico do Git.
+Os testes podem rodar sem uma RTX 3060. Algumas leituras do sistema podem ficar indisponíveis sem as permissões ou ferramentas externas necessárias.
 
-Para a análise estática do TinyGPU, é preciso um snapshot de IORegistry obtido no macOS:
+### Modelos offline do macOS
+
+Sete suítes que usam apenas lógica e dados simulados podem ser executadas no Linux com um compilador C++17:
 
 ```bash
-python3 scripts/tinygpu-match-check.py snapshot.json
-python3 scripts/tinygpu-match-check.py --self-test
+./scripts/test-macos-models.sh
 ```
 
-O `runbook` para coletar esse snapshot no macOS está em `docs/macos/hardware/ga106-ioreg-runbook.md`.
+Elas não carregam extensões e não acessam a GPU, a EFI ou o IOKit.
 
-## Organização do projeto
+### Compilação dos protótipos no macOS
 
-| Pasta | Responsabilidade |
+Cada revisão em `macos/research/GA106Lab-*-src/` possui seu próprio `build.sh`, quando disponível. Os scripts usam Xcode, SDK e cabeçalhos do kernel; o ambiente de referência está nos documentos de pesquisa.
+
+A compilação completa dos KEXTs não foi verificada nesta sessão Linux. O repositório não fornece instalação automática nem um pacote pronto para uso. Os registros de ensaio não devem ser tratados como um guia genérico de instalação.
+
+## Organização
+
+| Pasta | Conteúdo |
 |---|---|
-| `common/` | Biblioteca estática portátil: modelo do dispositivo PCI e tabela de IDs de chip, sem dependência de sistema operacional. |
-| `linux/ga106-lab/` | O executável de linha de comando, só para Linux. Todo o código de leitura do sistema real. |
-| `linux/tools/` | Apenas um README com ideias de script. Sem código ainda. |
-| `macos/` | Placeholder intencional, só um README. Nenhum código de driver. |
-| `docs/` | A pesquisa: arquitetura Ampere, mapa do GA106, auditorias de drivers de terceiros, prontidão da bancada e a estratégia para macOS. |
-| `scripts/` | `build.sh` e o avaliador estático em Python. |
-| `tests/` | Três executáveis de teste registrados no CTest. |
-| `artifacts/` | Instantâneos reais de baseline. Ignorado pelo Git. |
+| `common/` | Biblioteca de identificação e modelo PCI. |
+| `linux/ga106-lab/` | Ferramentas de observação no Linux. |
+| `macos/research/` | Revisões de fonte, testes e documentos importados do laboratório macOS. |
+| `docs/macos/STATUS-ATUAL.md` | Resumo consolidado dos resultados e limitações. |
+| `docs/macos/evidence/` | Registros históricos de testes e validação da importação. |
+| `docs/` | Pesquisa, decisões e documentação histórica. |
+| `scripts/` | Compilação, análise estática e execução de modelos offline. |
+| `tests/` | Testes unitários do laboratório Linux. |
 
-## Limitações e pendências
+## Testes e evidências
 
-**Restrições da fase atual, por decisão de projeto:**
+Na verificação de 5 de outubro de 2026, passaram:
 
-- Nada de escrita em MMIO, mudança de clock, tensão ou curva de ventoinha, reset de GPU, submissão de command buffer, troca de firmware, mudança de power state, unbind/bind de driver, abertura de `/dev/mem`, `mmap` de escrita em BAR ou contorno de IOMMU/Secure Boot.
-- O prontidão para MMIO está travada em `BLOCKED` dentro do próprio código, e o checklist de segurança em `docs/SAFETY_MMIO_PREREQUISITES.md` está em 3 de 11 itens. Faltam, entre outros, acesso por SSH verificado e o desktop migrado para a GPU integrada.
-- O parser de JSON aceita um subconjunto do formato, com profundidade máxima 64 e arquivo de até 8 MiB.
-- As varreduras de processos são limitadas (até 4096 PIDs, 256 descritores por processo, 512 descritores de render).
-- Sem root, `lspci -vv` mostra `Capabilities: <access denied>`.
+- Os três testes CTest: `common_smoke`, `compare_logic` e `chip_id`.
+- Sete suítes de modelos offline: estados, geração de canais, sequências, conclusão de comandos, contratos, memória virtual e submissão simulada.
 
-**Problemas conhecidos, sem relação com a fase:**
+Os detalhes estão em [Validação da importação](docs/macos/evidence/IMPORT-VALIDATION-2026-10-05.md).
 
-- `README.md` e `docs/README.md` na raiz descrevem um estado anterior do projeto, quando os quatro comandos ainda não existiam.
-- `docs/README.md` ainda marca `docs/ampere/`, `docs/ga106/`, `docs/nouveau/`, `docs/nvk/` e `docs/research/` como "placeholder", mas esses diretórios já têm conteúdo.
-- `docs/README.md` classifica `why-usb4` como "C+D CONFIRMED", o que foi corrigido depois em `docs/tinygpu/why-usb4.md` para `C LIKELY` e `D UNKNOWN`.
-- `docs/tinygpu/project-impact.md` pede um alinhamento de código que já foi feito em `common/include/nvidia/chip.hpp`.
-- O teste de inicialização sem a NVIDIA (`docs/lab/nvidia-free-boot-test.md`) nunca foi executado, e o acesso por SSH nunca foi verificado.
+Os documentos do Mac também registram testes com AddressSanitizer, ThreadSanitizer e testes de mutação. Esses resultados são históricos e não foram todos reproduzidos aqui. Testes com dados simulados não comprovam funcionamento da GPU.
 
-**O que falta de verdade para uma fase futura**, segundo a análise de lacunas: as etapas de bring-up do TinyGPU marcadas como `NÃO IMPLEMENTADO` no projeto — BOOT0, boot do GSP, MMU, VRAM, FIFOs, GPFIFO, compute e DMA. Nada disso existe.
+## Limitações e próximos passos
 
-## Próximos passos
+- O projeto está incompleto e não substitui um driver gráfico.
+- O código e os registros se referem a uma bancada específica; não há compatibilidade demonstrada com outros computadores.
+- Nem todas as revisões foram compiladas novamente ou validadas no hardware.
+- Alguns documentos antigos descrevem fases já superadas. O estado consolidado indica essas diferenças.
+- A leitura PCI registrada em uma das sessões tem um defeito conhecido na captura do código de saída; essa ressalva foi preservada.
+- Os próximos experimentos dependem de confirmar o estado do hardware e os resultados das etapas anteriores.
+- Inicialização de GSP, DMA, execução de comandos e integração gráfica continuam como trabalho experimental.
 
-Todos os itens abaixo estão escritos nos documentos do próprio projeto.
+A cópia original foi preservada localmente. Backups completos de EFI, dumps brutos da máquina, binários compilados, credenciais e arquivos de conversas não fazem parte desta publicação. O [manifesto da importação](macos/research/IMPORT-MANIFEST.json) identifica os arquivos publicados e seus hashes.
 
-1. **A missão imediata está no macOS, e ainda é só leitura.** Executar o runbook em `docs/macos/hardware/ga106-ioreg-runbook.md`, registrar o nó `10de:2504`, salvar um snapshot sanitizado, passar o `tinygpu-match-check.py` e recalcular o objetivo intermediário `MAC-COMPUTE-0`. O handoff está em `docs/macos/TGM0-HANDOFF.md`, com as proibições explicitadas.
-2. **Desbloquear o checklist de segurança** — os itens 10 (SSH) e 11 (migrar o desktop para a GPU integrada) precisam estar operacionais antes de qualquer escrita ser sequer proposta.
-3. **Confirmar em hardware passivo** os valores de `BOOT0` e da arquitetura citados em `docs/tinygrad-nv/ga106-gap-analysis.md`, sem escrita, mantendo a conclusão sobre o GA106 como `UNCERTAIN` até lá.
-4. **Antes de qualquer código derivado do TinyGPU**, a ADR-0002 exige executar `ioreg -l -w0`, `systemextensionsctl list` e `log show --predicate tinygpu`, além de um plano de fork com matriz de testes.
-5. **Backlogs de documentação**: `docs/ga106/bancada.md`, `docs/ga106/bars.md`, `docs/ga106/straps-bios.md` e as primeiras entradas de decisão em `docs/research/`.
+## Licença
 
-Metal e aceleração de desktop estão fora de escopo, por decisão registrada no handoff. O teto realista registrado é um laboratório de PCI/GSP/compute.
-
-## Testes
-
-Existem três testes, executados pelo **CTest**, que é a ferramenta de teste embutida no CMake. Não há framework de testes externo.
-
-```bash
-ctest --test-dir build --output-on-failure
-```
-
-O `./scripts/build.sh` já chama o `ctest` no final.
-
-| Teste | O que cobre |
-|---|---|
-| `common_smoke` | Invariantes do modelo PCI: BAR válido, BAR de memória, busca por índice, identificação NVIDIA, detecção de GA106. |
-| `chip_id` | Regressão sobre a tabela de ID PCI para die, incluindo os casos que costumam dar erro (`0x2487` para GA104 e um ID sem mapeamento). |
-| `compare_logic` | O parser de JSON (objetos, arrays, escapes, números, booleanos, `null`), rejeição de JSON malformado, classificação de chaves por classe e a ordenação fixa das seções na saída da comparação. |
-
-Os três são testes unitários: não tocam em `/sys`, nem em GPU, e não precisam de hardware nem de root.
-
-O que **não** tem teste: a coleta de dados em si (`pci_discovery`, `drm_discovery`, `lab_status` e a montagem do `baseline`) não tem cobertura de teste automatizada.
-
-Há ainda um auto-teste fora do CTest, com casos embutidos no próprio script:
-
-```bash
-python3 scripts/tinygpu-match-check.py --self-test
-```
-
-Os documentos registram esse auto-teste como passando. Não é o mesmo que os testes do CTest, e nenhum log de execução está guardado no repositório.
-
-## Documentos
-
-Os documentos usam uma escala de confiança declarada em `docs/tinygpu/why-usb4.md`:
-
-- `CONFIRMED` — afirmado ou provado no código-fonte ou no binário de terceiros.
-- `LIKELY` — implicado por uma constante ou por código, sem afirmação direta.
-- `UNCERTAIN` — evidência insuficiente.
-- `FALSE` — contradito pelo código-fonte.
-- `UNKNOWN` — nenhuma evidência encontrada.
-
-Essa escala é uma convenção dos documentos em Markdown. O código C++ usa vocabulário diferente: o texto `"unknown"` para todo campo ilegível, e vereditos `READY`, `BLOCKED` ou `PARTIALLY_READY`.
-
-Quando uma conclusão é superada por outra, o documento antigo recebe um aviso `[SUPERADO — ver Correção TGM0]` em vez de ser apagado, para que o histórico do raciocínio fique legível.
+Não foi adicionada uma nova licença nesta importação. Arquivos e trechos de terceiros preservam os avisos de autoria e licença que já continham.
